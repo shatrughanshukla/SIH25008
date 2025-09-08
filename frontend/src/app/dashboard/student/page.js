@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { FaBook, FaCalendarAlt, FaClipboardList, FaBell, FaUserCircle } from 'react-icons/fa';
+import NotificationsList from '@/app/components/NotificationsList';
+import DashboardHeader from '@/app/components/DashboardHeader';
+
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -86,7 +89,7 @@ export default function StudentDashboard() {
         return (
           <div className="bg-white rounded-lg shadow-md p-6 w-full">
             <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Notifications</h2>
-            <p className="text-gray-600">Your notifications will appear here.</p>
+            <NotificationsList />
           </div>
         );
       default:
@@ -95,7 +98,9 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
+    <>
+    <DashboardHeader/>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar */}
@@ -137,5 +142,6 @@ export default function StudentDashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }

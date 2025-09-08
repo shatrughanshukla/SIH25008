@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { FaShieldAlt, FaBookOpen, FaUsers, FaArrowRight } from 'react-icons/fa';
+import HomepageHeader from "./components/HomepageHeader";
 
 export default function Home() {
   return (
+    <>
+    <HomepageHeader/>
     <div className="min-h-screen">
       {/* Hero Section */}
       <div className="relative h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-8" 
@@ -97,5 +100,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }
