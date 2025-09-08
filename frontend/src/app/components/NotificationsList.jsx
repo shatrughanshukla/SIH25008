@@ -39,7 +39,7 @@ export default function NotificationsList() {
   if (!items.length) return <p className="text-sm text-gray-500">No recent alerts.</p>;
 
   return (
-    <div className="grid gap-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {items.map(a => (
         <NotificationCard key={a.uid || `${a.kind}-${a.id}`} alert={a} />
       ))}

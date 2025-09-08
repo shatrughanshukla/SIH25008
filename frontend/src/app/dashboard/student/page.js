@@ -1,147 +1,123 @@
 'use client';
 
 import { useState } from 'react';
-import { FaBook, FaCalendarAlt, FaClipboardList, FaBell, FaUserCircle } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaUserCircle, FaArrowRight } from 'react-icons/fa';
 import NotificationsList from '@/app/components/NotificationsList';
 import DashboardHeader from '@/app/components/DashboardHeader';
 
+// small, accessible progress bar
+function ProgressBar({ value = 0, label = 'Progress' }) {
+  const pct = Math.max(0, Math.min(100, value));
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-medium text-gray-600">{label}</span>
+        <span className="text-xs text-gray-500">{pct}%</span>
+      </div>
+      <div
+        className="w-full h-2 bg-gray-200 rounded-full overflow-hidden"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={pct}
+        aria-label={label}
+      >
+        <div
+          className="h-2 bg-gradient-to-r from-blue-600 to-indigo-600"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function StudentDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
-  
-  const renderTabContent = () => {
-    switch(activeTab) {
-      case 'overview':
-        return (
-          <div className="bg-white rounded-lg shadow-md p-6 w-full">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Overview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <div className="flex items-center">
-                  <div className="bg-blue-500 rounded-full p-3 mr-4">
-                    <FaBook className="text-white text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-700">Courses</h3>
-                    <p className="text-2xl font-bold text-blue-600">4</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <div className="flex items-center">
-                  <div className="bg-green-500 rounded-full p-3 mr-4">
-                    <FaClipboardList className="text-white text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-700">Assignments</h3>
-                    <p className="text-2xl font-bold text-green-600">7</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                <div className="flex items-center">
-                  <div className="bg-purple-500 rounded-full p-3 mr-4">
-                    <FaCalendarAlt className="text-white text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-700">Upcoming Events</h3>
-                    <p className="text-2xl font-bold text-purple-600">2</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <h3 className="text-xl font-semibold mb-3 text-gray-700">Recent Activities</h3>
-            <div className="space-y-3">
-              {[
-                { title: 'Earthquake Safety Module Completed', time: '2 hours ago', icon: FaBook },
-                { title: 'Assignment Submitted: Flood Prevention', time: 'Yesterday', icon: FaClipboardList },
-                { title: 'Mock Drill Scheduled', time: '3 days ago', icon: FaCalendarAlt }
-              ].map((activity, index) => (
-                <div key={index} className="flex items-center p-3 bg-gray-50 rounded-md">
-                  <activity.icon className="text-gray-500 mr-3" />
-                  <div>
-                    <p className="font-medium">{activity.title}</p>
-                    <p className="text-sm text-gray-500">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'courses':
-        return (
-          <div className="bg-white rounded-lg shadow-md p-6 w-full">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">My Courses</h2>
-            <p className="text-gray-600">Your enrolled courses will appear here.</p>
-          </div>
-        );
-      case 'assignments':
-        return (
-          <div className="bg-white rounded-lg shadow-md p-6 w-full">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Assignments</h2>
-            <p className="text-gray-600">Your assignments will appear here.</p>
-          </div>
-        );
-      case 'notifications':
-        return (
-          <div className="bg-white rounded-lg shadow-md p-6 w-full">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Notifications</h2>
-            <NotificationsList />
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  // If you want to vary the dummy progress per card, tweak these:
+  const modules = [
+    {
+      key: 'earthquake',
+      title: 'Earthquake',
+      href: '/dashboard/student/earthquakes',
+      progress: 45,
+      accent: 'from-blue-600 to-indigo-600',
+    },
+    {
+      key: 'fire',
+      title: 'Fire',
+      href: '/dashboard/fire',
+      progress: 10,
+      accent: 'from-rose-600 to-orange-600',
+    },
+    {
+      key: 'flood',
+      title: 'Flood',
+      href: '/dashboard/floods',
+      progress: 30,
+      accent: 'from-cyan-600 to-blue-600',
+    },
+
+  ];
 
   return (
     <>
-    <DashboardHeader/>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Sidebar */}
-          <div className="w-full md:w-64 bg-white rounded-lg shadow-md p-4">
-            <div className="flex items-center justify-center flex-col mb-6 pt-2">
-              <FaUserCircle className="text-6xl text-gray-400 mb-2" />
-              <h2 className="text-xl font-bold text-gray-800">Student Name</h2>
-              <p className="text-sm text-gray-500">student@example.com</p>
+      <DashboardHeader />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+
+          {/* Top: Welcome */}
+          <div className="bg-white rounded-xl shadow-md p-5 sm:p-6">
+            <div className="flex items-center gap-4">
+              <FaUserCircle className="text-5xl sm:text-6xl text-gray-400" />
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Welcome back, Student Name</h1>
+                <p className="text-sm text-gray-600">Here’s your disaster management training overview.</p>
+              </div>
             </div>
-            
-            <nav className="space-y-1">
-              {[
-                { name: 'Overview', id: 'overview', icon: FaBook },
-                { name: 'My Courses', id: 'courses', icon: FaBook },
-                { name: 'Assignments', id: 'assignments', icon: FaClipboardList },
-                { name: 'Notifications', id: 'notifications', icon: FaBell },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center w-full px-4 py-3 text-left rounded-md transition-colors ${activeTab === item.id ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
-                >
-                  <item.icon className="mr-3" />
-                  <span className="font-medium">{item.name}</span>
-                </button>
-              ))}
-            </nav>
           </div>
-          
-          {/* Main Content */}
-          <div className="flex-1">
-            <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-              <h1 className="text-2xl font-bold text-gray-800">Student Dashboard</h1>
-              <p className="text-gray-600">Welcome back! Here's your disaster management training overview.</p>
+
+          {/* Notifications */}
+          <div className="bg-white rounded-xl shadow-md p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Alerts!</h2>
+              {/* optional: a small refresh hint or time */}
             </div>
-            
-            {renderTabContent()}
+            <NotificationsList />
           </div>
+
+          {/* Three cards in a row (stack on small) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {modules.map((m) => (
+              <div key={m.key} className="bg-white rounded-xl shadow-md p-5 sm:p-6 flex flex-col">
+                <div className="mb-4">
+                  <div className={`inline-flex items-center rounded-lg px-3 py-1 text-sm font-medium text-white bg-gradient-to-r ${m.accent} shadow-sm`}>
+                    {m.title}
+                  </div>
+                </div>
+
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 mb-3">
+                    Continue your learning module on {m.title.toLowerCase()} preparedness.
+                  </p>
+                  <ProgressBar value={m.progress} label={`${m.title} module`} />
+                </div>
+
+                <div className="mt-5">
+                  <Link
+                    href={m.href}
+                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 shadow-sm transition-colors"
+                    prefetch
+                  >
+                    Continue
+                    <FaArrowRight aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
-    </div>
     </>
   );
 }
