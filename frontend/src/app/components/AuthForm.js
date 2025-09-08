@@ -1,81 +1,151 @@
 'use client';
 
-import { useState } from 'react';
-import { FaUser, FaEnvelope, FaLock, FaUserGraduate, FaChalkboardTeacher, FaGoogle } from 'react-icons/fa';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { FaUser, FaEnvelope, FaLock, FaUserGraduate, FaChalkboardTeacher, FaGoogle, FaCheck, FaTimes } from 'react-icons/fa';
 
 export default function AuthForm({ type }) {
+  const { login, register: registerUser } = useAuth();
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [profilePic, setProfilePic] = useState(null);
   const [role, setRole] = useState('student'); // Default role
+  const [loading, setLoading] = useState(false);
+  
+  // Validation states
+  const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [emailAvailable, setEmailAvailable] = useState(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const handleProfilePicChange = (e) => {
     setProfilePic(e.target.files[0]);
   };
+  
+  // Debounce function to limit API calls
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+  
+  // Check username availability
+  const checkUsername = useCallback(
+    debounce(async (username) => {
+      if (!username || username.length < 3) {
+        setUsernameAvailable(null);
+        setUsernameError('Username must be at least 3 characters');
+        return;
+      }
+      
+      try {
+        setCheckingUsername(true);
+        const response = await fetch(`/api/auth/check-username/${username}`);
+        const data = await response.json();
+        
+        setUsernameAvailable(data.available);
+        setUsernameError(data.available ? '' : 'Username already taken');
+      } catch (error) {
+        console.error('Error checking username:', error);
+        setUsernameError('Error checking username availability');
+      } finally {
+        setCheckingUsername(false);
+      }
+    }, 500),
+    []
+  );
+  
+  // Check email availability
+  const checkEmail = useCallback(
+    debounce(async (email) => {
+      if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        setEmailAvailable(null);
+        setEmailError('Please enter a valid email');
+        return;
+      }
+      
+      try {
+        setCheckingEmail(true);
+        const response = await fetch(`/api/auth/check-email/${email}`);
+        const data = await response.json();
+        
+        setEmailAvailable(data.available);
+        setEmailError(data.available ? '' : 'Email already in use');
+      } catch (error) {
+        console.error('Error checking email:', error);
+        setEmailError('Error checking email availability');
+      } finally {
+        setCheckingEmail(false);
+      }
+    }, 500),
+    []
+  );
+  
+  // Trigger availability check when username/email changes
+  useEffect(() => {
+    if (type === 'register' && username) {
+      checkUsername(username);
+    }
+  }, [type, username, checkUsername]);
+  
+  useEffect(() => {
+    if (type === 'register' && email) {
+      checkEmail(email);
+    }
+  }, [type, email, checkEmail]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let profilePicUrl = null;
-    if (type === 'register' && profilePic) {
-      profilePicUrl = await uploadProfilePic();
-      if (!profilePicUrl) return; // Stop if upload failed
-    }
-
+    setLoading(true);
+    
     try {
-      const response = await fetch(`/api/auth/${type}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(type === 'register' ? { name, username, email, password, role, profilePic: profilePicUrl } : { email, password }),
-      });
-
-      // Check if response is JSON before parsing
-      const contentType = response.headers.get('content-type');
-      let data;
-      
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        data = { message: await response.text() };
-      }
-
-      if (response.ok) {
-        console.log(`${type} successful:`, data);
-        // Redirect based on user role from response
+      if (type === 'register') {
+        // Validate username and email availability before submitting
+        if (username && !usernameAvailable) {
+          throw new Error('Username is already taken');
+        }
+        
+        if (email && !emailAvailable) {
+          throw new Error('Email is already in use');
+        }
+        
+        // Create user data object
+        const userData = {
+          name,
+          username,
+          email,
+          password,
+          role,
+          profilePic
+        };
+        
+        // Use the register function from AuthContext
+        const data = await registerUser(userData);
+        
+        // Redirect based on role
         window.location.href = data.role === 'student' ? '/dashboard/student' : '/dashboard/teacher';
       } else {
-        console.error(`${type} failed:`, data.message);
-        // Show error message to user
+        // Use the login function from AuthContext
+        const data = await login(email, password);
+        
+        // Redirect based on user role from response
+        window.location.href = data.role === 'student' ? '/dashboard/student' : '/dashboard/teacher';
       }
     } catch (error) {
-      console.error('Error during authentication:', error);
-      // Show error message to user
+      console.error('Authentication error:', error);
+      alert(error.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const uploadProfilePic = async () => {
-    if (!profilePic) return null;
-
-    const formData = new FormData();
-    formData.append('profilePic', profilePic);
-
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.text();
-      return data;
-    } catch (error) {
-      console.error('Profile picture upload error:', error);
-      alert('Profile picture upload failed.');
-      return null;
-    }
-  };
+  // Profile picture is now handled directly in the registration process
 
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
@@ -99,7 +169,7 @@ export default function AuthForm({ type }) {
               placeholder="Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="text-black w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
@@ -115,14 +185,26 @@ export default function AuthForm({ type }) {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`text-black w-full pl-10 pr-10 py-3 border ${usernameError ? 'border-red-500' : usernameAvailable ? 'border-green-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               required
             />
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+              {checkingUsername ? (
+                <div className="h-5 w-5 border-t-2 border-blue-500 rounded-full animate-spin"></div>
+              ) : username && usernameAvailable === true ? (
+                <FaCheck className="h-5 w-5 text-green-500" />
+              ) : username && usernameAvailable === false ? (
+                <FaTimes className="h-5 w-5 text-red-500" />
+              ) : null}
+            </div>
+            {usernameError && (
+              <p className="mt-1 text-sm text-red-600">{usernameError}</p>
+            )}
           </div>
         )}
         
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="text-black absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FaEnvelope className="h-5 w-5 text-gray-400" />
           </div>
           <input
@@ -130,9 +212,21 @@ export default function AuthForm({ type }) {
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className={`text-black w-full pl-10 pr-10 py-3 border ${emailError ? 'border-red-500' : emailAvailable ? 'border-green-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
             required
           />
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            {checkingEmail ? (
+              <div className="h-5 w-5 border-t-2 border-blue-500 rounded-full animate-spin"></div>
+            ) : email && emailAvailable === true ? (
+              <FaCheck className="h-5 w-5 text-green-500" />
+            ) : email && emailAvailable === false ? (
+              <FaTimes className="h-5 w-5 text-red-500" />
+            ) : null}
+          </div>
+          {emailError && type === 'register' && (
+            <p className="mt-1 text-sm text-red-600">{emailError}</p>
+          )}
         </div>
         
         <div className="relative">
@@ -140,13 +234,13 @@ export default function AuthForm({ type }) {
             <FaLock className="h-5 w-5 text-gray-400" />
           </div>
           <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-          />
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="text-black w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
         </div>
         
         {type === 'register' && (
@@ -214,9 +308,10 @@ export default function AuthForm({ type }) {
         <div className="pt-2">
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-medium transition-colors duration-200 transform shadow-md hover:shadow-lg"
+            disabled={loading || (type === 'register' && (usernameAvailable === false || emailAvailable === false))}
+            className={`w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-medium transition-colors duration-200 transform shadow-md hover:shadow-lg ${(loading || (type === 'register' && (usernameAvailable === false || emailAvailable === false))) ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
-            {type === 'login' ? 'Sign In' : 'Create Account'}
+            {loading ? 'Processing...' : (type === 'login' ? 'Sign In' : 'Create Account')}
           </button>
         </div>
         

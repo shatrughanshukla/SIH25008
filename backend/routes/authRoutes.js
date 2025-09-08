@@ -1,27 +1,113 @@
 const express = require('express');
 const User = require('../models/User');
+const multer = require('multer');
+const path = require('path');
 
 const router = express.Router();
 
-// Register User
-router.post('/register', async (req, res) => {
-  const { name, username, email, password, role, profilePic } = req.body;
+// Set up multer storage for profile pictures
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename(req, file, cb) {
+    cb(
+      null,
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+    );
+  },
+});
 
+// Check file type
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (extname && mimetype) {
+    return cb(null, true);
+  } else {
+    cb('Images Only!');
+  }
+}
+
+// Configure multer upload
+const upload = multer({
+  storage,
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  },
+});
+
+// Check username availability
+router.get('/check-username/:username', async (req, res) => {
   try {
-    const userExists = await User.findOne({ email });
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+    
+    if (user) {
+      return res.status(200).json({ available: false });
+    }
+    
+    res.status(200).json({ available: true });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+// Check email availability
+router.get('/check-email/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await User.findOne({ email });
+    
+    if (user) {
+      return res.status(200).json({ available: false });
+    }
+    
+    res.status(200).json({ available: true });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Register User
+router.post('/register', upload.single('profilePic'), async (req, res) => {
+  try {
+    const { name, username, email, password, role } = req.body;
+    
+    // Validate required fields
+    if (!name || !username || !email || !password || !role) {
+      return res.status(400).json({ message: 'Please fill all required fields' });
     }
 
-    const user = await User.create({
+    // Check if user already exists by email
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+    
+    // Check if username is taken
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      return res.status(400).json({ message: 'Username already taken' });
+    }
+
+    // Create user with profile picture if uploaded
+    const userData = {
       name,
       username,
       email,
       password,
       role,
-      profilePic,
-    });
+    };
+
+    // Add profile picture path if file was uploaded
+    if (req.file) {
+      userData.profilePic = `/${req.file.path}`;
+    }
+
+    const user = await User.create(userData);
 
     if (user) {
       res.status(201).json({
@@ -36,6 +122,7 @@ router.post('/register', async (req, res) => {
       res.status(400).json({ message: 'Invalid user data' });
     }
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({ message: error.message });
   }
 });

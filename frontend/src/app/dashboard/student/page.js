@@ -1,10 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { FaBook, FaCalendarAlt, FaClipboardList, FaBell, FaUserCircle } from 'react-icons/fa';
 
 export default function StudentDashboard() {
+  const { user, loading, getUserProfile } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
+  
+  useEffect(() => {
+    // If not loading and no user, redirect to login
+    if (!loading && !user) {
+      router.push('/login');
+      return;
+    }
+    
+    // If user exists, get the latest profile data
+    if (user) {
+      getUserProfile().catch(error => {
+        console.error('Error fetching user profile:', error);
+        // If there's an authentication error, redirect to login
+        if (error.message === 'Not authenticated') {
+          router.push('/login');
+        }
+      });
+    }
+  }, [loading, user, router, getUserProfile]);
   
   const renderTabContent = () => {
     switch(activeTab) {
@@ -72,14 +95,14 @@ export default function StudentDashboard() {
         return (
           <div className="bg-white rounded-lg shadow-md p-6 w-full">
             <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">My Courses</h2>
-            <p className="text-gray-600">Your enrolled courses will appear here.</p>
+            <p className="text-gray-700">Your enrolled courses will appear here.</p>
           </div>
         );
       case 'assignments':
         return (
           <div className="bg-white rounded-lg shadow-md p-6 w-full">
             <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Assignments</h2>
-            <p className="text-gray-600">Your assignments will appear here.</p>
+            <p className="text-gray-700">Your assignments will appear here.</p>
           </div>
         );
       case 'notifications':
@@ -101,9 +124,17 @@ export default function StudentDashboard() {
           {/* Sidebar */}
           <div className="w-full md:w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center justify-center flex-col mb-6 pt-2">
-              <FaUserCircle className="text-6xl text-gray-400 mb-2" />
-              <h2 className="text-xl font-bold text-gray-800">Student Name</h2>
-              <p className="text-sm text-gray-500">student@example.com</p>
+              {user?.profilePic ? (
+                <img 
+                  src={user.profilePic} 
+                  alt="Profile" 
+                  className="w-16 h-16 rounded-full object-cover mb-2" 
+                />
+              ) : (
+                <FaUserCircle className="text-6xl text-gray-400 mb-2" />
+              )}
+              <h2 className="text-xl font-bold text-gray-800">{user?.name || 'Loading...'}</h2>
+              <p className="text-sm text-gray-500">{user?.email || 'student@example.com'}</p>
             </div>
             
             <nav className="space-y-1">
@@ -129,7 +160,7 @@ export default function StudentDashboard() {
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-md p-4 mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Student Dashboard</h1>
-              <p className="text-gray-600">Welcome back! Here's your disaster management training overview.</p>
+              <p className="text-gray-700">Welcome back, {user?.name || 'Student'}! Here's your disaster management training overview.</p>
             </div>
             
             {renderTabContent()}

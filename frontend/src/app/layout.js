@@ -1,6 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
+import AuthButtons from "./components/AuthButtons";
+import FooterLinks from "./components/FooterLinks";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +31,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased`}
       >
+        <AuthProvider>
         <nav className="bg-gradient-to-r from-blue-700 to-indigo-800 shadow-lg sticky top-0 z-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -50,8 +54,7 @@ export default function RootLayout({ children }) {
               </div>
               
               <div className="flex items-center space-x-3">
-                <a href="/login" className="bg-white text-blue-700 hover:bg-blue-50 font-medium py-2 px-4 rounded-md transition-colors duration-200 shadow-sm">Sign In</a>
-                <a href="/register" className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 shadow-sm">Register</a>
+                <AuthButtons />
               </div>
             </div>
           </div>
@@ -70,11 +73,7 @@ export default function RootLayout({ children }) {
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-                <ul className="space-y-2">
-                  <li><a href="/" className="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                  <li><a href="/login" className="text-gray-400 hover:text-white transition-colors">Login</a></li>
-                  <li><a href="/register" className="text-gray-400 hover:text-white transition-colors">Register</a></li>
-                </ul>
+                <FooterLinks />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-4">Contact</h3>
@@ -87,6 +86,7 @@ export default function RootLayout({ children }) {
             </div>
           </div>
         </footer>
+        </AuthProvider>
       </body>
     </html>
   );

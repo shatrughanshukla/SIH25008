@@ -33,6 +33,7 @@ app.get('/api/auth/google/callback', passport.authenticate('google'), (req, res)
   res.send('You are logged in with Google!');
 });
 
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
