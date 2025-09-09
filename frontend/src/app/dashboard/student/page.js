@@ -30,8 +30,8 @@ useEffect(() => {
     // Add a small delay to prevent rapid consecutive calls
     const timeoutId = setTimeout(async () => {
       try {
-        // Get user profile data - this will update the user state internally in AuthContext
-        const profileData = await getUserProfile();
+        // Get user profile data with allowRetry=false to prevent infinite loops
+        const profileData = await getUserProfile(false);
         
         // If component unmounted during the API call, don't update state
         if (!isMounted) {
@@ -60,7 +60,6 @@ useEffect(() => {
         if (isMounted) {
           console.error('Error fetching user profile:', error);
           setIsLoading(false);
-          console.log('Authentication error, redirecting to login');
           router.push('/login');
         }
       }
@@ -68,14 +67,14 @@ useEffect(() => {
     
     // Cleanup function to handle unmounting
     return () => {
-      console.log('StudentDashboard useEffect cleanup - preventing state updates after unmount');
+      console.log('Dashboard useEffect cleanup - preventing state updates after unmount');
       clearTimeout(timeoutId);
       isMounted = false;
     };
   } else {
     setIsLoading(false);
   }
-}, [loading, user, router]); // getUserProfile is intentionally excluded from dependencies
+}, [loading, user, router]); // getUserProfile is intentionally excluded from dependencies to prevent infinite loops
   
   // Show loading spinner when fetching profile
   if (isLoading) {

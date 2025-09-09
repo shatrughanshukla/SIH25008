@@ -15,8 +15,10 @@ const PORT = process.env.PORT || 5000;
 
 // CORS middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
-  credentials: true
+  origin: ['http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -36,8 +38,12 @@ app.get('/api/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
 }));
 
-app.get('/api/auth/google/callback', passport.authenticate('google'), (req, res) => {
-  res.send('You are logged in with Google!');
+app.get('/api/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+  // Create a JWT token for the authenticated user
+  const token = req.user.getSignedJwtToken();
+  
+  // Redirect to the frontend with the token
+  res.redirect(`http://localhost:3000/auth/success?token=${token}&userId=${req.user._id}`);
 });
 
 app.use('/api/users', require('./routes/userRoutes'));

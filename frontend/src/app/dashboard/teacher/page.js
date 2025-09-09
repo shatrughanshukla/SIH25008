@@ -18,59 +18,64 @@ useEffect(() => {
   if (!loading && !user) {
     console.log('No user detected, redirecting to login');
     router.push('/login');
-    return;
+    return; // Early return prevents further execution
   }
-
+  
   // If user exists, get the latest profile data
   if (user) {
     let isMounted = true; // Flag to track component mount state
     
     // Set loading state before API call
     setIsLoading(true);
-
+    
     // Add a small delay to prevent rapid consecutive calls
     const timeoutId = setTimeout(async () => {
       try {
-        const profileData = await getUserProfile();
+        // Get user profile data with allowRetry=false to prevent infinite loops
+        const profileData = await getUserProfile(false);
         
-        // Check if component is still mounted before updating state
-        if (isMounted) {
-          setIsLoading(false);
-
-          // If profile data is null, redirect to login
-          if (!profileData) {
-            console.log('No profile data returned, redirecting to login');
-            router.push('/login');
-            return;
-          }
-
-          // Verify user role is teacher, redirect otherwise
-          if (profileData.role !== 'teacher') {
-            console.log('User is not a teacher, redirecting');
-            router.push(`/dashboard/${profileData.role}`);
-          }
+        // If component unmounted during the API call, don't update state
+        if (!isMounted) {
+          console.log('Component unmounted, skipping state updates');
+          return;
+        }
+        
+        console.log('Profile loaded successfully');
+        setIsLoading(false);
+        
+        // If profile data is null, redirect to login
+        if (!profileData) {
+          console.log('No profile data returned, redirecting to login');
+          router.push('/login');
+          return;
+        }
+        
+        // Verify user role is teacher, redirect otherwise
+        if (profileData.role !== 'teacher') {
+          console.log('User is not a teacher, redirecting');
+          router.push(`/dashboard/${profileData.role}`);
+          return;
         }
       } catch (error) {
         // Only update state and redirect if component is still mounted
         if (isMounted) {
           console.error('Error fetching user profile:', error);
           setIsLoading(false);
-          console.log('Authentication error, redirecting to login');
           router.push('/login');
-          console.error('Profile fetch failed:', error.message);
         }
       }
     }, 300);
-
+    
     // Cleanup function to handle unmounting
     return () => {
-      isMounted = false;
+      console.log('Dashboard useEffect cleanup - preventing state updates after unmount');
       clearTimeout(timeoutId);
+      isMounted = false;
     };
   } else {
     setIsLoading(false);
   }
-}, [loading, user, router]); // Removed getUserProfile from dependencies to prevent infinite loop
+}, [loading, user, router]); // getUserProfile is intentionally excluded from dependencies to prevent infinite loops
   
   // Show loading spinner when fetching profile
   if (isLoading) {
