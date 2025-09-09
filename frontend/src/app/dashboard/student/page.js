@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FaBook, FaCalendarAlt, FaClipboardList, FaBell, FaUserCircle } from 'react-icons/fa';
+import AuthDiagnosticTool from '@/app/components/AuthDiagnosticTool';
 
 export default function StudentDashboard() {
   const { user, loading, getUserProfile, logout } = useAuth();
@@ -11,33 +12,66 @@ export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    // If not loading and no user, redirect to login
-    if (!loading && !user) {
-      router.push('/login');
-      return;
-    }
-    
-    // If user exists, get the latest profile data
-    if (user) {
-      setIsLoading(true);
-      getUserProfile()
-        .then(() => {
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching user profile:', error);
-          setIsLoading(false);
-          // If there's an authentication error, redirect to login
-          if (error.message === 'Not authenticated') {
-            router.push('/login');
-          }
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }, [loading, user, router]); // Removed getUserProfile from dependencies
+useEffect(() => {
+  // If not loading and no user, redirect to login
+  if (!loading && !user) {
+    console.log('No user detected, redirecting to login');
+    router.push('/login');
+    return;
+  }
   
+  // If user exists, get the latest profile data
+  if (user) {
+    // Set loading state before API call
+    setIsLoading(true);
+    
+    // Add a small delay to prevent rapid consecutive calls
+    const timeoutId = setTimeout(async () => {
+      try {
+        const profileData = await getUserProfile();
+        console.log('Profile loaded successfully');
+        setIsLoading(false);
+        
+        // If profile data is null, redirect to login
+        if (!profileData) {
+          console.log('No profile data returned, redirecting to login');
+          router.push('/login');
+          return;
+        }
+        
+        // Verify user role is student, redirect otherwise
+        if (profileData.role !== 'student') {
+          console.log('User is not a student, redirecting');
+          router.push(`/dashboard/${profileData.role}`);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setIsLoading(false);
+        
+        // Redirect to login on any error
+        console.log('Authentication error, redirecting to login');
+        router.push('/login');
+        console.error('Profile fetch failed:', error.message);
+      }
+    }, 300);
+    
+    // Clean up timeout if component unmounts
+    return () => clearTimeout(timeoutId);
+  } else {
+    setIsLoading(false);
+  }
+}, [loading, user, router, getUserProfile]); // Added getUserProfile back to dependencies
+  
+  // Show loading spinner when fetching profile
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-600 text-lg">Loading student dashboard...</p>
+      </div>
+    );
+  }
+
   const renderTabContent = () => {
     switch(activeTab) {
       case 'overview':
@@ -223,6 +257,9 @@ export default function StudentDashboard() {
           </div>
         </div>
       </div>
+      
+      {/* Add the diagnostic tool for debugging authentication issues */}
+      <AuthDiagnosticTool />
     </div>
   );
 }

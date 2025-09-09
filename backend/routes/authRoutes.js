@@ -151,4 +151,62 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @desc    Refresh user token
+// @route   POST /api/auth/refresh
+// @access  Public (with expired token)
+router.post('/refresh', async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({ message: 'No token provided' });
+    }
+
+    // Get the JWT secret from environment variables
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      console.error('JWT_SECRET is not defined in environment variables');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    // Verify the token without checking expiration
+    let decoded;
+    try {
+      // First try normal verification (will fail if expired)
+      decoded = require('jsonwebtoken').verify(token, JWT_SECRET);
+      
+      // If we get here, token is still valid, just return the same token
+      return res.json({ token, message: 'Token still valid' });
+    } catch (error) {
+      // If error is not about expiration, reject the request
+      if (error.name !== 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Invalid token', error: error.message });
+      }
+      
+      // For expired tokens, decode without verification to get the payload
+      const decodedPayload = require('jsonwebtoken').decode(token);
+      if (!decodedPayload || !decodedPayload.id) {
+        return res.status(401).json({ message: 'Invalid token payload' });
+      }
+      
+      // Get user from database
+      const user = await User.findById(decodedPayload.id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      // Generate new token using the user's method
+      const newToken = user.getSignedJwtToken();
+      
+      res.json({
+        token: newToken,
+        message: 'Token refreshed successfully'
+      });
+    }
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;

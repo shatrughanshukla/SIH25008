@@ -1,24 +1,17 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 import AuthButtons from "./components/AuthButtons";
 import FooterLinks from "./components/FooterLinks";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// Import local fonts instead of Google Fonts
+import { geistSans, geistMono, inter } from "./fonts";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
+// Fallback system fonts in case font files are missing
+const systemFonts = {
+  sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+  mono: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+};
 
 export const metadata = {
   title: "Disaster Management Platform | SIH25008",
@@ -31,6 +24,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased`}
       >
+        <ToastProvider>
         <AuthProvider>
         <nav className="bg-gradient-to-r from-blue-700 to-indigo-800 shadow-lg sticky top-0 z-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,6 +81,7 @@ export default function RootLayout({ children }) {
           </div>
         </footer>
         </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

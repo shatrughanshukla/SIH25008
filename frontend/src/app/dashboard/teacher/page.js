@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import AuthDiagnosticTool from '@/app/components/AuthDiagnosticTool';
 import { FaBook, FaUsers, FaClipboardList, FaBell, FaUserTie, FaChalkboardTeacher } from 'react-icons/fa';
 
 export default function TeacherDashboard() {
@@ -12,33 +13,75 @@ export default function TeacherDashboard() {
   
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // If not loading and no user, redirect to login
-    if (!loading && !user) {
-      router.push('/login');
-      return;
-    }
+useEffect(() => {
+  // If not loading and no user, redirect to login
+  if (!loading && !user) {
+    console.log('No user detected, redirecting to login');
+    router.push('/login');
+    return;
+  }
+
+  // If user exists, get the latest profile data
+  if (user) {
+    let isMounted = true; // Flag to track component mount state
     
-    // If user exists, get the latest profile data
-    if (user) {
-      setIsLoading(true);
-      getUserProfile()
-        .then(() => {
+    // Set loading state before API call
+    setIsLoading(true);
+
+    // Add a small delay to prevent rapid consecutive calls
+    const timeoutId = setTimeout(async () => {
+      try {
+        const profileData = await getUserProfile();
+        
+        // Check if component is still mounted before updating state
+        if (isMounted) {
           setIsLoading(false);
-        })
-        .catch(error => {
+
+          // If profile data is null, redirect to login
+          if (!profileData) {
+            console.log('No profile data returned, redirecting to login');
+            router.push('/login');
+            return;
+          }
+
+          // Verify user role is teacher, redirect otherwise
+          if (profileData.role !== 'teacher') {
+            console.log('User is not a teacher, redirecting');
+            router.push(`/dashboard/${profileData.role}`);
+          }
+        }
+      } catch (error) {
+        // Only update state and redirect if component is still mounted
+        if (isMounted) {
           console.error('Error fetching user profile:', error);
           setIsLoading(false);
-          // If there's an authentication error, redirect to login
-          if (error.message === 'Not authenticated') {
-            router.push('/login');
-          }
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }, [loading, user, router]); // Removed getUserProfile from dependencies
+          console.log('Authentication error, redirecting to login');
+          router.push('/login');
+          console.error('Profile fetch failed:', error.message);
+        }
+      }
+    }, 300);
+
+    // Cleanup function to handle unmounting
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
+  } else {
+    setIsLoading(false);
+  }
+}, [loading, user, router, getUserProfile]); // Added getUserProfile back as dependency
   
+  // Show loading spinner when fetching profile
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-600 text-lg">Loading teacher dashboard...</p>
+      </div>
+    );
+  }
+
   const renderTabContent = () => {
     switch(activeTab) {
       case 'overview':
@@ -238,6 +281,9 @@ export default function TeacherDashboard() {
           </div>
         </div>
       </div>
+      
+      {/* Add the diagnostic tool for debugging authentication issues */}
+      <AuthDiagnosticTool />
     </div>
   );
 }
