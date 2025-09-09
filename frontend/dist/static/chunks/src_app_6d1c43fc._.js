@@ -556,7 +556,8 @@ const AuthProvider = (param)=>{
         }
     };
     // Get current user profile with improved error handling and token management
-    const getUserProfile = async ()=>{
+    const getUserProfile = async function() {
+        let allowRetry = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : true;
         try {
             // Check if user is authenticated
             if (!user || !user.token) {
@@ -628,7 +629,7 @@ const AuthProvider = (param)=>{
                 };
                 console.error('Profile fetch failed with details:', errorDetails);
                 // Handle authentication errors
-                if (response.status === 401) {
+                if (response.status === 401 && allowRetry) {
                     console.error('Unauthorized: Token rejected by server');
                     toast.showWarningToast('Your session has expired. Please log in again.');
                     // Try to refresh token once
@@ -640,7 +641,7 @@ const AuthProvider = (param)=>{
                         return null;
                     }
                     // Retry with new token (but only once to prevent infinite loops)
-                    return getUserProfile();
+                    return getUserProfile(false); // Pass false to prevent further retries
                 }
                 // Try to get error details from response
                 let errorMessage = "Failed to fetch user profile: ".concat(response.status, " ").concat(response.statusText);
@@ -680,13 +681,22 @@ const AuthProvider = (param)=>{
                 return null;
             }
             console.log('Profile fetched successfully:', data.name || data.email || 'Unknown user');
-            // Update user in state and localStorage with latest data
-            const updatedUser = {
+            // Only update user state if the data is different to prevent unnecessary re-renders
+            const hasChanges = JSON.stringify(data) !== JSON.stringify({
                 ...user,
-                ...data
-            };
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+                token: undefined // Exclude token from comparison
+            });
+            if (hasChanges) {
+                console.log('User profile data changed, updating state');
+                const updatedUser = {
+                    ...user,
+                    ...data
+                };
+                setUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+            } else {
+                console.log('No changes in user profile data, skipping state update');
+            }
             return data;
         } catch (error) {
             // Log detailed error information
@@ -714,7 +724,7 @@ const AuthProvider = (param)=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/src/app/context/AuthContext.js",
-        lineNumber: 320,
+        lineNumber: 330,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

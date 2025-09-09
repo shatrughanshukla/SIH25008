@@ -70,7 +70,7 @@ useEffect(() => {
   } else {
     setIsLoading(false);
   }
-}, [loading, user, router, getUserProfile]); // Added getUserProfile back as dependency
+}, [loading, user, router]); // Removed getUserProfile from dependencies to prevent infinite loop
   
   // Show loading spinner when fetching profile
   if (isLoading) {

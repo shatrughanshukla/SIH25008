@@ -17,18 +17,28 @@ useEffect(() => {
   if (!loading && !user) {
     console.log('No user detected, redirecting to login');
     router.push('/login');
-    return;
+    return; // Early return prevents further execution
   }
   
   // If user exists, get the latest profile data
   if (user) {
+    let isMounted = true; // Flag to track component mount state
+    
     // Set loading state before API call
     setIsLoading(true);
     
     // Add a small delay to prevent rapid consecutive calls
     const timeoutId = setTimeout(async () => {
       try {
+        // Get user profile data - this will update the user state internally in AuthContext
         const profileData = await getUserProfile();
+        
+        // If component unmounted during the API call, don't update state
+        if (!isMounted) {
+          console.log('Component unmounted, skipping state updates');
+          return;
+        }
+        
         console.log('Profile loaded successfully');
         setIsLoading(false);
         
@@ -43,24 +53,29 @@ useEffect(() => {
         if (profileData.role !== 'student') {
           console.log('User is not a student, redirecting');
           router.push(`/dashboard/${profileData.role}`);
+          return;
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
-        setIsLoading(false);
-        
-        // Redirect to login on any error
-        console.log('Authentication error, redirecting to login');
-        router.push('/login');
-        console.error('Profile fetch failed:', error.message);
+        // Only update state and redirect if component is still mounted
+        if (isMounted) {
+          console.error('Error fetching user profile:', error);
+          setIsLoading(false);
+          console.log('Authentication error, redirecting to login');
+          router.push('/login');
+        }
       }
     }, 300);
     
-    // Clean up timeout if component unmounts
-    return () => clearTimeout(timeoutId);
+    // Cleanup function to handle unmounting
+    return () => {
+      console.log('StudentDashboard useEffect cleanup - preventing state updates after unmount');
+      clearTimeout(timeoutId);
+      isMounted = false;
+    };
   } else {
     setIsLoading(false);
   }
-}, [loading, user, router, getUserProfile]); // Added getUserProfile back to dependencies
+}, [loading, user, router]); // getUserProfile is intentionally excluded from dependencies
   
   // Show loading spinner when fetching profile
   if (isLoading) {
@@ -198,7 +213,7 @@ useEffect(() => {
                 />
               )}
               <div className="ml-4">
-                <p className="font-medium">{user?.email || 'student@example.com'}</p>
+                <p className="font-medium">{user?.username || 'student@example.com'}</p>
                 <p className="text-sm text-blue-200">Student</p>
               </div>
             </div>
