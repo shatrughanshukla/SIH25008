@@ -41,20 +41,23 @@ export default function StudentDashboard() {
       href: '/dashboard/student/earthquakes',
       progress: 45,
       accent: 'from-blue-600 to-indigo-600',
+      img: { src: '/earthquake.png', alt: 'Seismic landscape representing earthquake preparedness' },
     },
     {
       key: 'fire',
       title: 'Fire',
-      href: '/dashboard/fire',
+      href: '/dashboard/student/fire',
       progress: 10,
       accent: 'from-rose-600 to-orange-600',
+      img: { src: '/fire.jpg', alt: 'Fire safety imagery with flames and smoke' },
     },
     {
       key: 'flood',
       title: 'Flood',
-      href: '/dashboard/floods',
+      href: '/dashboard/student/flood',
       progress: 30,
       accent: 'from-cyan-600 to-blue-600',
+      img: { src: '/flood.jpg', alt: 'Flooded street representing flood preparedness' },
     },
 
   ];
@@ -62,8 +65,8 @@ export default function StudentDashboard() {
   return (
     <>
       <DashboardHeader />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 py-2 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-4">
 
           {/* Top: Welcome */}
           <div className="bg-white rounded-xl shadow-md p-5 sm:p-6">
@@ -78,7 +81,7 @@ export default function StudentDashboard() {
 
           {/* Notifications */}
           <div className="bg-white rounded-xl shadow-md p-5 sm:p-6">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="flex items-center justify-between mb-0 ">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Alerts!</h2>
               {/* optional: a small refresh hint or time */}
             </div>
@@ -99,6 +102,15 @@ export default function StudentDashboard() {
                   <p className="text-sm text-gray-600 mb-3">
                     Continue your learning module on {m.title.toLowerCase()} preparedness.
                   </p>
+                                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg mb-3">
+                  <img
+                    src={m.img.src}
+                    alt={m.img.alt}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                </div>
                   <ProgressBar value={m.progress} label={`${m.title} module`} />
                 </div>
 

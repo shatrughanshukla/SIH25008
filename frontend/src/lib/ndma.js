@@ -58,6 +58,21 @@ async function fetchWithTimeout(url, ms=4000){
     clearTimeout(t);
   }
 }
+function isEnglishLangCode(v = '') {
+  const s = String(v).trim().toLowerCase();
+  if (!s) return false;
+  // matches: en, en-in, en_us, english, etc.
+  return s === 'en' || s.startsWith('en-') || s.startsWith('en_') || s === 'english';
+}
+
+function looksEnglish(text = '') {
+  const s = String(text || '').trim();
+  if (!s) return false;
+  // crude but fast: ratio of basic ASCII letters, digits, spaces, and common punctuations
+  const ascii = s.match(/[A-Za-z0-9 ,.;:!?'()"“”‘’\-–—\/\\]/g)?.length || 0; // note: escaped /
+  const total = s.length;
+  return ascii / total >= 0.75; // at least 75% ASCII-ish
+}
 
 /**
  * Fetch NDMA CAP (RSS) → normalize → enrich top N from the CAP XML.
@@ -114,34 +129,53 @@ export async function getNdmaCapAlerts(limit = 5){
   // Enrich from CAP XML (prefer English block)
   await Promise.allSettled(top.map(async a => {
     if (!a.xmlUrl) return;
-    try{
+    try {
       const capXml = await fetchWithTimeout(a.xmlUrl, 4000);
       const capJ = parser.parse(capXml);
       const alert = capJ?.['cap:alert'] || {};
       const infosRaw = alert?.['cap:info'];
       const infos = Array.isArray(infosRaw) ? infosRaw : (infosRaw ? [infosRaw] : []);
-      const pickLang = (inf) => {
-        const lang = (pickText(inf?.['cap:language']) || '').toLowerCase();
-        return lang === 'en' || lang === 'en-in';
+
+      const langOf = (inf) => pickText(inf?.['cap:language']) || '';
+      const headOf = (inf) => pickText(inf?.['cap:headline']) || '';
+      const areaOf = (inf) => {
+        const areaRaw = inf?.['cap:area'];
+        const areas = Array.isArray(areaRaw) ? areaRaw : (areaRaw ? [areaRaw] : []);
+        return pickText(areas[0]?.['cap:areaDesc']) || '';
       };
-      const info = infos.find(pickLang) || infos[0] || {};
 
-      const sev = pickText(info?.['cap:severity']);      // e.g., Severe
-      const ev  = pickText(info?.['cap:event']) || 'Alert';
-      const head= pickText(info?.['cap:headline']) || '';
-      const areaRaw = info?.['cap:area'];
-      const areas = Array.isArray(areaRaw) ? areaRaw : (areaRaw ? [areaRaw] : []);
-      const areaDesc = pickText(areas[0]?.['cap:areaDesc']) || '';
+      // Rank infos: explicit English first, then those that "look English", then others
+      const ranked = [...infos].sort((x, y) => {
+        const xe = isEnglishLangCode(langOf(x)) ? 2 : looksEnglish(headOf(x) + ' ' + areaOf(x)) ? 1 : 0;
+        const ye = isEnglishLangCode(langOf(y)) ? 2 : looksEnglish(headOf(y) + ' ' + areaOf(y)) ? 1 : 0;
+        return ye - xe; // higher score first
+      });
 
-      // ALWAYS override from XML (fixes "Unknown" + non-English)
-      a.severity = capSeverityToBadge(sev || a.severity);
+      const info = ranked[0] || {};
+      const sevRaw = pickText(info?.['cap:severity']);
+      const ev = pickText(info?.['cap:event']) || 'Alert';
+      const head = headOf(info);
+      const areaDesc = areaOf(info);
+
+      // ALWAYS override from XML; default severity to 'Severe' when missing/unknown
+      a.severity = capSeverityToBadge(sevRaw);  // defaults unknown -> 'Severe'
       a.event = ev;
       a.title = head || (areaDesc ? `${ev} – ${areaDesc}` : ev);
       a.location = areaDesc || a.location;
+
+      // mark language for filtering: explicit code OR heuristic
+      const code = langOf(info);
+      a._isEnglish = isEnglishLangCode(code) || looksEnglish(a.title + ' ' + a.location);
     } catch {
-      // ignore enrichment failures
+      // On enrichment failure, be conservative: not English
+      a._isEnglish = false;
+      // still normalize severity in case upstream set something odd
+      a.severity = capSeverityToBadge(a.severity);
     }
   }));
 
-  return top;
-}
+  // Return English only (explicit 'en*' or looks-English heuristic)
+  const englishOnly = top.filter(a => !!a._isEnglish);
+
+  return englishOnly;
+} // <-- missing brace added here

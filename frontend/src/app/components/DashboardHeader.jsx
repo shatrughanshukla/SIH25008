@@ -1,14 +1,26 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { FaChevronDown, FaUserCircle, FaSignOutAlt, FaCog, FaUser } from 'react-icons/fa';
+import {
+  ShieldAlert,        // logo
+  MessageSquare,      // Chatbot
+  Clapperboard,       // Reels
+  Trophy,             // LeaderBoard
+  Info,               // About
+  UserRound,          // Profile avatar
+  ChevronDown,        // Profile caret
+  User,               // My Account
+  Settings,           // Settings
+  LogOut,              // Logout
+  Phone
+} from 'lucide-react';
 
 const DashboardHeader = () => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const btnRef = useRef(null);
 
-  // Close on outside click
+  // Close on outside click + Esc
   useEffect(() => {
     function onClickOutside(e) {
       if (!menuRef.current || !btnRef.current) return;
@@ -27,45 +39,43 @@ const DashboardHeader = () => {
     };
   }, []);
 
+  const navLink =
+    'text-white hover:bg-blue-600 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center gap-2';
+
   return (
     <nav className="bg-gradient-to-r from-blue-700 to-indigo-800 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/dashboard" className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-white mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="text-white font-bold text-xl tracking-tight">Disaster Dashboard</span>
+            <a href="/dashboard/student" className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-white" aria-hidden="true" />
+              <span className="text-white font-bold text-xl tracking-tight">
+                Disaster Dashboard
+              </span>
             </a>
           </div>
 
           {/* Nav links */}
           <div className="hidden md:flex items-center space-x-4">
-            <a
-              href="/dashboard/chatbot"
-              className="text-white hover:bg-blue-600 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
+            <a href="/dashboard/chatbot" className={navLink}>
+              <MessageSquare className="h-4 w-4" aria-hidden="true" />
               Chatbot
             </a>
-            <a
-              href="/dashboard/leaderboard"
-              className="text-white hover:bg-blue-600 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
+            <a href="/dashboard/student/reels" className={navLink}>
+              <Clapperboard className="h-4 w-4" aria-hidden="true" />
+              Reels
+            </a>
+            <a href="/dashboard/student/leaderboard" className={navLink}>
+              <Trophy className="h-4 w-4" aria-hidden="true" />
               LeaderBoard
             </a>
-            <a
-              href="/dashboard/about"
-              className="text-white hover:bg-blue-600 hover:bg-opacity-75 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            >
+            <a href="/dashboard/contact" className={navLink}>
+              <Phone className="h-4 w-4" aria-hidden="true" />
+              Emergency Contact
+            </a>
+            <a href="/dashboard/about" className={navLink}>
+              <Info className="h-4 w-4" aria-hidden="true" />
               About
             </a>
 
@@ -78,9 +88,12 @@ const DashboardHeader = () => {
                 aria-haspopup="menu"
                 aria-expanded={open}
               >
-                <FaUserCircle className="text-white text-lg" aria-hidden="true" />
+                <UserRound className="h-5 w-5 text-white" aria-hidden="true" />
                 <span>Profile</span>
-                <FaChevronDown className={`transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                />
               </button>
 
               {open && (
@@ -95,7 +108,8 @@ const DashboardHeader = () => {
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     onClick={() => setOpen(false)}
                   >
-                    <FaUser aria-hidden="true" /> My Account
+                    <User className="h-4 w-4" aria-hidden="true" />
+                    My Account
                   </a>
                   <a
                     href="/dashboard/settings"
@@ -103,7 +117,8 @@ const DashboardHeader = () => {
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     onClick={() => setOpen(false)}
                   >
-                    <FaCog aria-hidden="true" /> Settings
+                    <Settings className="h-4 w-4" aria-hidden="true" />
+                    Settings
                   </a>
                   <div className="h-px bg-gray-200" />
                   <button
@@ -113,17 +128,17 @@ const DashboardHeader = () => {
                     onClick={() => {
                       setOpen(false);
                       // TODO: hook your sign-out method here
-                      // e.g., signOut();
                     }}
                   >
-                    <FaSignOutAlt aria-hidden="true" /> Logout
+                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                    Logout
                   </button>
                 </div>
               )}
             </div>
           </div>
 
-          {/* (Optional) Mobile: keep simple or add a hamburger later */}
+          {/* (Optional) Mobile: add a hamburger later if needed */}
         </div>
       </div>
     </nav>
