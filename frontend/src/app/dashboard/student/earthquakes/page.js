@@ -234,26 +234,6 @@ export default function EarthquakeModulePage() {
                 </div>
               </Accordion>
 
-              <Accordion label="Videos ▾ (expand to view)">
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>
-                    <a className="text-blue-700 hover:underline" href="#">
-                      Drop, Cover, Hold On (2 min)
-                    </a>
-                  </li>
-                  <li>
-                    <a className="text-blue-700 hover:underline" href="#">
-                      Securing Furniture at Home
-                    </a>
-                  </li>
-                  <li>
-                    <a className="text-blue-700 hover:underline" href="#">
-                      Community Evacuation Drills
-                    </a>
-                  </li>
-                </ul>
-              </Accordion>
-
               <Accordion label="Resources ▾ (expand to view)">
                 <ul className="list-disc pl-5 space-y-1">
                   <li>
