@@ -44,9 +44,11 @@ export default function ProfilePage() {
                   className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg" 
                 />
               ) : (
-                <div className="h-32 w-32 rounded-full bg-white flex items-center justify-center shadow-lg">
-                  <FaUserCircle className="h-24 w-24 text-gray-400" />
-                </div>
+                <img 
+                  src="/uploads/default.png" 
+                  alt="Default Profile" 
+                  className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg" 
+                />
               )}
             </div>
             <h2 className="mt-6 text-xl font-bold text-white">{user.name}</h2>

@@ -103,9 +103,19 @@ export const AuthProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
+        // Add cache: 'no-store' to prevent caching issues
+        cache: 'no-store'
       });
 
       if (!response.ok) {
+        // If token is expired or invalid, clear user data and redirect to login
+        if (response.status === 401) {
+          console.error('Authentication token expired or invalid');
+          // Clear user data but don't redirect yet (let the component handle it)
+          setUser(null);
+          localStorage.removeItem('user');
+          throw new Error('Not authenticated');
+        }
         throw new Error('Failed to fetch user profile');
       }
 

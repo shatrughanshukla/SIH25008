@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useId } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FaUser, FaEnvelope, FaLock, FaUserGraduate, FaChalkboardTeacher, FaGoogle, FaCheck, FaTimes } from 'react-icons/fa';
 
@@ -21,6 +21,14 @@ export default function AuthForm({ type }) {
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [usernameError, setUsernameError] = useState('');
   const [emailError, setEmailError] = useState('');
+  
+  // Generate stable IDs for form elements
+  const nameId = useId();
+  const usernameId = useId();
+  const emailId = useId();
+  const passwordId = useId();
+  const profilePicId = useId();
+  const roleId = useId();
 
   const handleProfilePicChange = (e) => {
     setProfilePic(e.target.files[0]);
@@ -165,12 +173,14 @@ export default function AuthForm({ type }) {
               <FaUser className="h-5 w-5 text-gray-400" />
             </div>
             <input
+              id={nameId}
               type="text"
               placeholder="Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="text-black w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
+              suppressHydrationWarning
             />
           </div>
         )}
@@ -181,12 +191,14 @@ export default function AuthForm({ type }) {
               <FaUser className="h-5 w-5 text-gray-400" />
             </div>
             <input
+              id={usernameId}
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className={`text-black w-full pl-10 pr-10 py-3 border ${usernameError ? 'border-red-500' : usernameAvailable ? 'border-green-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               required
+              suppressHydrationWarning
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
               {checkingUsername ? (
@@ -208,12 +220,14 @@ export default function AuthForm({ type }) {
             <FaEnvelope className="h-5 w-5 text-gray-400" />
           </div>
           <input
+            id={emailId}
             type="email"
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={`text-black w-full pl-10 pr-10 py-3 border ${emailError ? 'border-red-500' : emailAvailable ? 'border-green-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
             required
+            suppressHydrationWarning
           />
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
             {checkingEmail ? (
@@ -234,19 +248,21 @@ export default function AuthForm({ type }) {
             <FaLock className="h-5 w-5 text-gray-400" />
           </div>
           <input
+              id={passwordId}
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="text-black w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
+              suppressHydrationWarning
             />
         </div>
         
         {type === 'register' && (
           <div className="space-y-3">
             <div className="mb-2">
-              <label htmlFor="profilePic" className="block text-gray-700 text-sm font-medium mb-2">Profile Picture</label>
+              <label htmlFor={profilePicId} className="block text-gray-700 text-sm font-medium mb-2">Profile Picture</label>
               <div className="flex items-center">
                 <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
                   {profilePic ? (
@@ -263,7 +279,7 @@ export default function AuthForm({ type }) {
                   Choose File
                   <input
                     type="file"
-                    id="profilePic"
+                    id={profilePicId}
                     accept="image/*"
                     onChange={handleProfilePicChange}
                     className="sr-only"
@@ -276,12 +292,12 @@ export default function AuthForm({ type }) {
             </div>
             
             <div>
-              <label htmlFor="role" className="block text-gray-700 text-sm font-medium mb-2">I am a</label>
-              <div className="grid grid-cols-2 gap-3">
-                <div 
-                  className={`flex items-center justify-center p-3 border ${role === 'student' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'} rounded-lg cursor-pointer hover:bg-gray-50 transition-colors`}
-                  onClick={() => setRole('student')}
-                >
+                <label htmlFor={roleId} className="block text-gray-700 text-sm font-medium mb-2">I am a</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div 
+                    className={`flex items-center justify-center p-3 border ${role === 'student' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'} rounded-lg cursor-pointer hover:bg-gray-50 transition-colors`}
+                    onClick={() => setRole('student')}
+                  >
                   <FaUserGraduate className={`h-5 w-5 mr-2 ${role === 'student' ? 'text-blue-500' : 'text-gray-400'}`} />
                   <span className={`${role === 'student' ? 'font-medium text-blue-700' : 'text-gray-700'}`}>Student</span>
                 </div>
@@ -294,9 +310,11 @@ export default function AuthForm({ type }) {
                 </div>
               </div>
               <select 
+                id={roleId}
                 value={role} 
                 onChange={(e) => setRole(e.target.value)}
                 className="sr-only"
+                suppressHydrationWarning
               >
                 <option value="student">Student</option>
                 <option value="teacher">Teacher</option>
@@ -310,6 +328,7 @@ export default function AuthForm({ type }) {
             type="submit"
             disabled={loading || (type === 'register' && (usernameAvailable === false || emailAvailable === false))}
             className={`w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 font-medium transition-colors duration-200 transform shadow-md hover:shadow-lg ${(loading || (type === 'register' && (usernameAvailable === false || emailAvailable === false))) ? 'opacity-70 cursor-not-allowed' : ''}`}
+            suppressHydrationWarning
           >
             {loading ? 'Processing...' : (type === 'login' ? 'Sign In' : 'Create Account')}
           </button>
@@ -323,6 +342,7 @@ export default function AuthForm({ type }) {
                 name="remember-me"
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                suppressHydrationWarning
               />
               <label htmlFor="remember-me" className="ml-2 block text-gray-700">
                 Remember me

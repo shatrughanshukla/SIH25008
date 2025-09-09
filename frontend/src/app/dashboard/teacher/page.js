@@ -6,10 +6,12 @@ import { useRouter } from 'next/navigation';
 import { FaBook, FaUsers, FaClipboardList, FaBell, FaUserTie, FaChalkboardTeacher } from 'react-icons/fa';
 
 export default function TeacherDashboard() {
-  const { user, loading, getUserProfile } = useAuth();
+  const { user, loading, getUserProfile, logout } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     // If not loading and no user, redirect to login
     if (!loading && !user) {
@@ -19,15 +21,23 @@ export default function TeacherDashboard() {
     
     // If user exists, get the latest profile data
     if (user) {
-      getUserProfile().catch(error => {
-        console.error('Error fetching user profile:', error);
-        // If there's an authentication error, redirect to login
-        if (error.message === 'Not authenticated') {
-          router.push('/login');
-        }
-      });
+      setIsLoading(true);
+      getUserProfile()
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching user profile:', error);
+          setIsLoading(false);
+          // If there's an authentication error, redirect to login
+          if (error.message === 'Not authenticated') {
+            router.push('/login');
+          }
+        });
+    } else {
+      setIsLoading(false);
     }
-  }, [loading, user, router, getUserProfile]);
+  }, [loading, user, router]); // Removed getUserProfile from dependencies
   
   const renderTabContent = () => {
     switch(activeTab) {
@@ -142,6 +152,17 @@ export default function TeacherDashboard() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-700 font-medium">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -156,7 +177,11 @@ export default function TeacherDashboard() {
                   className="w-16 h-16 rounded-full object-cover mb-2" 
                 />
               ) : (
-                <FaUserTie className="text-6xl text-gray-400 mb-2" />
+                <img 
+                  src="/uploads/default.png" 
+                  alt="Default Profile" 
+                  className="w-16 h-16 rounded-full object-cover mb-2" 
+                />
               )}
               <h2 className="text-xl font-bold text-gray-800">{user?.name || 'Loading...'}</h2>
               <p className="text-sm text-gray-500">{user?.email || 'teacher@example.com'}</p>
@@ -178,6 +203,27 @@ export default function TeacherDashboard() {
                   <span className="font-medium">{item.name}</span>
                 </button>
               ))}
+              
+              {/* Profile and Logout */}
+              <div className="pt-4 mt-4 border-t border-gray-200">
+                <button
+                  onClick={() => router.push('/profile')}
+                  className="flex items-center w-full px-4 py-3 text-left rounded-md hover:bg-gray-100 text-gray-700 transition-colors"
+                >
+                  <FaUserTie className="mr-3 text-indigo-500" />
+                  <span className="font-medium">My Profile</span>
+                </button>
+                
+                <button
+                  onClick={logout}
+                  className="flex items-center w-full px-4 py-3 text-left rounded-md hover:bg-red-50 text-red-600 transition-colors mt-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="font-medium">Logout</span>
+                </button>
+              </div>
             </nav>
           </div>
           

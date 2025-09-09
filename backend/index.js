@@ -5,12 +5,19 @@ dotenv.config();
 const connectDB = require('./db');
 const passport = require('passport');
 const session = require('express-session');
+const cors = require('cors');
 require('./passport-setup');
 
 connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// CORS middleware
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true
+}));
 
 app.use(express.json());
 
@@ -43,5 +50,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port http://localhost:${PORT}`);
 });
