@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Duck, Cover & Hold Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #game-container {
+            margin: 10px auto;
+            display: block;
+            width: 900px;
+            height: 600px;
+        }
+
+        #ui {
+            margin-top: 10px;
+        }
+
+        #start-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Duck, Cover & Hold</h1>
+    <div id="game-container"></div>
+
+    <div id="ui">
+        <button id="start-btn">Start Game</button>
+        <div>Time left: <span id="time-val">--</span> sec</div>
+        <div id="result"></div>
+    </div>
+
+    <!-- Load Phaser 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+    <!-- Load game code -->
+    <script src="game.js"></script>
+</body>
+
+</html>
