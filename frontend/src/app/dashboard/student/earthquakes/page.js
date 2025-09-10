@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -48,66 +48,21 @@ function Accordion({ label, children, defaultOpen = false }) {
 
 /* --- FAQ data (your 15 Q&As) --- */
 const FAQS = [
-  {
-    q: 'What should I do during strong shaking?',
-    a: 'Drop, cover, and hold under a sturdy table until the shaking stops.',
-  },
-  {
-    q: 'How do I prepare a family emergency kit?',
-    a: 'Pack water, food, flashlight, medicines, cash, ID copies, and a first-aid kit.',
-  },
-  {
-    q: 'What to check at home after an earthquake?',
-    a: 'Look for gas leaks, damaged wiring, water line breaks, and wall cracks.',
-  },
-  {
-    q: 'Where is the safest place to take cover indoors?',
-    a: 'Under a strong table or desk, away from windows and heavy objects.',
-  },
-  {
-    q: 'How do I stay safe if I’m outside during an earthquake?',
-    a: 'Move to an open area, away from buildings, trees, and power lines.',
-  },
-  {
-    q: 'What should I do if I’m driving when an earthquake hits?',
-    a: 'Pull over safely, stay inside the car, and avoid bridges or overpasses.',
-  },
-  {
-    q: 'How can schools prepare students for earthquakes?',
-    a: 'Conduct regular drills and teach drop–cover–hold techniques.',
-  },
-  {
-    q: 'What items must be in an earthquake “go-bag”?',
-    a: 'Essentials like water, dry food, flashlight, medicines, charger, and blankets.',
-  },
-  {
-    q: 'How do I turn off gas, water, and electricity safely after an earthquake?',
-    a: 'Use main switches and valves only if you suspect leaks or damage.',
-  },
-  {
-    q: 'What should I avoid doing immediately after an earthquake?',
-    a: 'Avoid using elevators, running outside, or lighting matches near gas leaks.',
-  },
-  {
-    q: 'How can I protect pets during an earthquake?',
-    a: 'Keep carriers, leashes, and some pet food ready in your emergency kit.',
-  },
-  {
-    q: 'What’s the difference between an earthquake and an aftershock?',
-    a: 'Aftershocks are smaller quakes that follow the main earthquake.',
-  },
-  {
-    q: 'How do early warning systems work?',
-    a: 'They detect seismic waves and send alerts seconds before shaking begins.',
-  },
-  {
-    q: 'Why is it unsafe to run outside during an earthquake?',
-    a: 'Falling glass, debris, and power lines can injure you.',
-  },
-  {
-    q: 'What are the biggest earthquake myths people still believe?',
-    a: 'Standing in a doorway is safest (it’s not), and animals can always predict quakes.',
-  },
+  { q: 'What should I do during strong shaking?', a: 'Drop, cover, and hold under a sturdy table until the shaking stops.' },
+  { q: 'How do I prepare a family emergency kit?', a: 'Pack water, food, flashlight, medicines, cash, ID copies, and a first-aid kit.' },
+  { q: 'What to check at home after an earthquake?', a: 'Look for gas leaks, damaged wiring, water line breaks, and wall cracks.' },
+  { q: 'Where is the safest place to take cover indoors?', a: 'Under a strong table or desk, away from windows and heavy objects.' },
+  { q: 'How do I stay safe if I’m outside during an earthquake?', a: 'Move to an open area, away from buildings, trees, and power lines.' },
+  { q: 'What should I do if I’m driving when an earthquake hits?', a: 'Pull over safely, stay inside the car, and avoid bridges or overpasses.' },
+  { q: 'How can schools prepare students for earthquakes?', a: 'Conduct regular drills and teach drop–cover–hold techniques.' },
+  { q: 'What items must be in an earthquake “go-bag”?', a: 'Essentials like water, dry food, flashlight, medicines, charger, and blankets.' },
+  { q: 'How do I turn off gas, water, and electricity safely after an earthquake?', a: 'Use main switches and valves only if you suspect leaks or damage.' },
+  { q: 'What should I avoid doing immediately after an earthquake?', a: 'Avoid using elevators, running outside, or lighting matches near gas leaks.' },
+  { q: 'How can I protect pets during an earthquake?', a: 'Keep carriers, leashes, and some pet food ready in your emergency kit.' },
+  { q: 'What’s the difference between an earthquake and an aftershock?', a: 'Aftershocks are smaller quakes that follow the main earthquake.' },
+  { q: 'How do early warning systems work?', a: 'They detect seismic waves and send alerts seconds before shaking begins.' },
+  { q: 'Why is it unsafe to run outside during an earthquake?', a: 'Falling glass, debris, and power lines can injure you.' },
+  { q: 'What are the biggest earthquake myths people still believe?', a: 'Standing in a doorway is safest (it’s not), and animals can always predict quakes.' },
 ];
 
 /* --- Small, nested FAQ item --- */
@@ -121,20 +76,15 @@ function FaqItem({ q, a }) {
         aria-expanded={open}
       >
         <span className="font-medium text-gray-900">{q}</span>
-        <FaChevronDown
-          className={`text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`}
-        />
+        <FaChevronDown className={`text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
-      {open && (
-        <div className="px-3 pb-3 text-gray-700">
-          {a}
-        </div>
-      )}
+      {open && <div className="px-3 pb-3 text-gray-700">{a}</div>}
     </div>
   );
 }
 
 export default function EarthquakeModulePage() {
+
   return (
     <>
       <DashboardHeader />
@@ -183,15 +133,17 @@ export default function EarthquakeModulePage() {
                 />
                 {/* Soft gradient for text legibility */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent z-0" />
-                {/* Centered button slightly above bottom */}
-                <Link
-                  href="/student/dashboard/earthquake/drill"
-                  prefetch
-                  className="z-10 absolute left-1/2 -translate-x-1/2 bottom-5 sm:bottom-6 inline-flex items-center gap-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 shadow-md"
-                >
-                  <FaPlay aria-hidden="true" />
-                  Play Game
-                </Link>
+                {/* Play Game -> open modal */}
+<a
+  href="/earthquake_drill/index.html"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="z-10 absolute left-1/2 -translate-x-1/2 bottom-5 sm:bottom-6 inline-flex items-center gap-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 shadow-md"
+>
+  <FaPlay aria-hidden="true" />
+  Play Game
+</a>
+
               </div>
 
               <p className="text-xs text-gray-500 text-center">
@@ -237,42 +189,27 @@ export default function EarthquakeModulePage() {
               <Accordion label="Resources ▾ (expand to view)">
                 <ul className="list-disc pl-5 space-y-1">
                   <li>
-                    <a
-                      className="text-blue-700 hover:underline"
-                      href="https://en.wikipedia.org/wiki/Earthquake"
-                    >
+                    <a className="text-blue-700 hover:underline" href="https://en.wikipedia.org/wiki/Earthquake">
                       Earthquake Preparedness Checklist
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="text-blue-700 hover:underline"
-                      href="https://en.wikipedia.org/wiki/Lists_of_21st-century_earthquakes"
-                    >
+                    <a className="text-blue-700 hover:underline" href="https://en.wikipedia.org/wiki/Lists_of_21st-century_earthquakes">
                       List of 21st century earthquakes
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="text-blue-700 hover:underline"
-                      href="https://byjus.com/physics/protection-against-earthquake/"
-                    >
+                    <a className="text-blue-700 hover:underline" href="https://byjus.com/physics/protection-against-earthquake/">
                       Safety Plan
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="text-blue-700 hover:underline"
-                      href="https://earthquakelist.org/india/delhi/"
-                    >
+                    <a className="text-blue-700 hover:underline" href="https://earthquakelist.org/india/delhi/">
                       EarthQuake List Delhi
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="text-blue-700 hover:underline"
-                      href="https://disasterphilanthropy.org/cdp-resource/earthquakes/"
-                    >
+                    <a className="text-blue-700 hover:underline" href="https://disasterphilanthropy.org/cdp-resource/earthquakes/">
                       EarthQuake
                     </a>
                   </li>
@@ -299,6 +236,7 @@ export default function EarthquakeModulePage() {
           </div>
         </div>
       </div>
+
     </>
   );
 }
