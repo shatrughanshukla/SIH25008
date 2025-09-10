@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { FaShieldAlt, FaBookOpen, FaUsers, FaArrowRight } from 'react-icons/fa';
+
 import HomepageHeader from "./components/HomepageHeader";
 
 export default function Home() {
@@ -66,7 +67,7 @@ export default function Home() {
                   <FaShieldAlt className="h-6 w-6 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Safety First</h3>
-                <p className="text-gray-600">Learn essential safety protocols and procedures for various disaster scenarios.</p>
+                <p className="text-gray-700">Learn essential safety protocols and procedures for various disaster scenarios.</p>
               </div>
             </div>
             
@@ -76,7 +77,7 @@ export default function Home() {
                   <FaBookOpen className="h-6 w-6 text-indigo-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Expert Content</h3>
-                <p className="text-gray-600">Access courses designed by disaster management experts with real-world experience.</p>
+                <p className="text-gray-700">Access courses designed by disaster management experts with real-world experience.</p>
               </div>
             </div>
             
@@ -86,7 +87,7 @@ export default function Home() {
                   <FaUsers className="h-6 w-6 text-purple-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Community Focus</h3>
-                <p className="text-gray-600">Build resilient communities through collaborative learning and preparation.</p>
+                <p className="text-gray-700">Build resilient communities through collaborative learning and preparation.</p>
               </div>
             </div>
           </div>

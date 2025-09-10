@@ -20,20 +20,28 @@ passport.use(
       callbackURL: '/api/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
-      const currentUser = await User.findOne({ googleId: profile.id });
-      if (currentUser) {
-        done(null, currentUser);
-      } else {
-        const newUser = await new User({
-          googleId: profile.id,
-          name: profile.displayName,
-          email: profile.emails[0].value,
-          // For simplicity, setting a default role and password for Google users.
-          // In a real app, you might want to prompt the user for this.
-          role: 'student',
-          password: Math.random().toString(36).slice(-8), // Placeholder password
-        }).save();
-        done(null, newUser);
+      try {
+        const currentUser = await User.findOne({ googleId: profile.id });
+        if (currentUser) {
+          done(null, currentUser);
+        } else {
+          // Generate a random username based on display name and random string
+          const randomString = Math.random().toString(36).substring(2, 8);
+          const username = profile.displayName.toLowerCase().replace(/\s+/g, '_') + '_' + randomString;
+          
+          const newUser = await new User({
+            googleId: profile.id,
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            username: username, // Add username field
+            role: 'student',
+            password: Math.random().toString(36).slice(-8), // Placeholder password
+          }).save();
+          done(null, newUser);
+        }
+      } catch (error) {
+        console.error('Error in Google authentication strategy:', error);
+        done(error, null);
       }
     }
   )

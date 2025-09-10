@@ -1,11 +1,92 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import AuthDiagnosticTool from '@/app/components/AuthDiagnosticTool';
 import { FaBook, FaUsers, FaClipboardList, FaBell, FaUserTie, FaChalkboardTeacher } from 'react-icons/fa';
 
 export default function TeacherDashboard() {
+  const { user, loading, getUserProfile, logout } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   
+  const [isLoading, setIsLoading] = useState(true);
+
+useEffect(() => {
+  // If not loading and no user, redirect to login
+  if (!loading && !user) {
+    console.log('No user detected, redirecting to login');
+    router.push('/login');
+    return; // Early return prevents further execution
+  }
+  
+  // If user exists, get the latest profile data
+  if (user) {
+    let isMounted = true; // Flag to track component mount state
+    
+    // Set loading state before API call
+    setIsLoading(true);
+    
+    // Add a small delay to prevent rapid consecutive calls
+    const timeoutId = setTimeout(async () => {
+      try {
+        // Get user profile data with allowRetry=false to prevent infinite loops
+        const profileData = await getUserProfile(false);
+        
+        // If component unmounted during the API call, don't update state
+        if (!isMounted) {
+          console.log('Component unmounted, skipping state updates');
+          return;
+        }
+        
+        console.log('Profile loaded successfully');
+        setIsLoading(false);
+        
+        // If profile data is null, redirect to login
+        if (!profileData) {
+          console.log('No profile data returned, redirecting to login');
+          router.push('/login');
+          return;
+        }
+        
+        // Verify user role is teacher, redirect otherwise
+        if (profileData.role !== 'teacher') {
+          console.log('User is not a teacher, redirecting');
+          router.push(`/dashboard/${profileData.role}`);
+          return;
+        }
+      } catch (error) {
+        // Only update state and redirect if component is still mounted
+        if (isMounted) {
+          console.error('Error fetching user profile:', error);
+          setIsLoading(false);
+          router.push('/login');
+        }
+      }
+    }, 300);
+    
+    // Cleanup function to handle unmounting
+    return () => {
+      console.log('Dashboard useEffect cleanup - preventing state updates after unmount');
+      clearTimeout(timeoutId);
+      isMounted = false;
+    };
+  } else {
+    setIsLoading(false);
+  }
+}, [loading, user, router]); // getUserProfile is intentionally excluded from dependencies to prevent infinite loops
+  
+  // Show loading spinner when fetching profile
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-600 text-lg">Loading teacher dashboard...</p>
+      </div>
+    );
+  }
+
   const renderTabContent = () => {
     switch(activeTab) {
       case 'overview':
@@ -104,14 +185,14 @@ export default function TeacherDashboard() {
         return (
           <div className="bg-white rounded-lg shadow-md p-6 w-full">
             <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Students</h2>
-            <p className="text-gray-600">Your student list will appear here.</p>
+            <p className="text-gray-700">Your student list will appear here.</p>
           </div>
         );
       case 'assignments':
         return (
           <div className="bg-white rounded-lg shadow-md p-6 w-full">
             <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Assignments</h2>
-            <p className="text-gray-600">Your assignments will appear here.</p>
+            <p className="text-gray-700">Your assignments will appear here.</p>
           </div>
         );
       default:
@@ -119,6 +200,16 @@ export default function TeacherDashboard() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-700 font-medium">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -126,9 +217,21 @@ export default function TeacherDashboard() {
           {/* Sidebar */}
           <div className="w-full md:w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center justify-center flex-col mb-6 pt-2">
-              <FaUserTie className="text-6xl text-gray-400 mb-2" />
-              <h2 className="text-xl font-bold text-gray-800">Teacher Name</h2>
-              <p className="text-sm text-gray-500">teacher@example.com</p>
+              {user?.profilePic ? (
+                <img 
+                  src={user.profilePic} 
+                  alt="Profile" 
+                  className="w-16 h-16 rounded-full object-cover mb-2" 
+                />
+              ) : (
+                <img 
+                  src="/uploads/default.png" 
+                  alt="Default Profile" 
+                  className="w-16 h-16 rounded-full object-cover mb-2" 
+                />
+              )}
+              <h2 className="text-xl font-bold text-gray-800">{user?.name || 'Loading...'}</h2>
+              <p className="text-sm text-gray-500">{user?.email || 'teacher@example.com'}</p>
             </div>
             
             <nav className="space-y-1">
@@ -147,6 +250,26 @@ export default function TeacherDashboard() {
                   <span className="font-medium">{item.name}</span>
                 </button>
               ))}
+              {/* Profile and Logout */}
+              <div className="pt-4 mt-4 border-t border-gray-200">
+                <button
+                  onClick={() => router.push('/profile')}
+                  className="flex items-center w-full px-4 py-3 text-left rounded-md hover:bg-gray-100 text-gray-700 transition-colors"
+                >
+                  <FaUserTie className="mr-3 text-indigo-500" />
+                  <span className="font-medium">My Profile</span>
+                </button>
+                
+                <button
+                  onClick={logout}
+                  className="flex items-center w-full px-4 py-3 text-left rounded-md hover:bg-red-50 text-red-600 transition-colors mt-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="font-medium">Logout</span>
+                </button>
+              </div>
             </nav>
           </div>
           
@@ -154,13 +277,15 @@ export default function TeacherDashboard() {
           <div className="flex-1">
             <div className="bg-white rounded-lg shadow-md p-4 mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Teacher Dashboard</h1>
-              <p className="text-gray-600">Welcome back! Here's your disaster management teaching overview.</p>
+              <p className="text-gray-700">Welcome back, {user?.name || 'Teacher'}! Here's your disaster management teaching overview.</p>
             </div>
-            
             {renderTabContent()}
           </div>
         </div>
       </div>
+      
+      {/* Add the diagnostic tool for debugging authentication issues */}
+      <AuthDiagnosticTool />
     </div>
   );
 }
