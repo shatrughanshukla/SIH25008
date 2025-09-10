@@ -101,7 +101,7 @@ function AuthSuccess() {
                     }
                     try {
                         // Fetch user data to get role and other information
-                        const apiUrl = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                        const apiUrl = ("TURBOPACK compile-time value", "http://localhost:5000") || 'http://localhost:5000';
                         const profileUrl = "".concat(apiUrl, "/api/users/profile");
                         console.log('Fetching user profile from:', profileUrl);
                         const response = await fetch(profileUrl, {

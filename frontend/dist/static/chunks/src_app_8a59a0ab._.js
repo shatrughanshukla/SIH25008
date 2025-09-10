@@ -117,7 +117,7 @@ const runAuthDiagnostic = async ()=>{
     };
     // Check environment
     results.environment = {
-        nextPublicApiUrl: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || 'Not set',
+        nextPublicApiUrl: ("TURBOPACK compile-time value", "http://localhost:5000") || 'Not set',
         baseUrl: window.location.origin,
         userAgent: navigator.userAgent
     };
@@ -219,7 +219,7 @@ const testApiEndpoint = async function(endpoint) {
     const { method = 'GET', token = null, body = null, baseUrls = [
         '',
         'http://localhost:5000',
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || '' // Environment variable URL
+        ("TURBOPACK compile-time value", "http://localhost:5000") || '' // Environment variable URL
     ], timeout = 5000, includeCredentials = true } = options;
     const results = [];
     // Test each base URL

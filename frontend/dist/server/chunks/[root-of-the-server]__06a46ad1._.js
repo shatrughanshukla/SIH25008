@@ -1,5 +1,5 @@
 module.exports = [
-"[project]/.next-internal/server/app/api/auth/register/route/actions.js [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__, module, exports) => {
+"[project]/.next-internal/server/app/api/auth/login/route/actions.js [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__, module, exports) => {
 
 }),
 "[externals]/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js [external] (next/dist/compiled/next-server/app-route-turbo.runtime.dev.js, cjs)", ((__turbopack_context__, module, exports) => {
@@ -50,7 +50,7 @@ const mod = __turbopack_context__.x("next/dist/server/app-render/action-async-st
 
 module.exports = mod;
 }),
-"[project]/src/app/api/auth/register/route.js [app-route] (ecmascript)", ((__turbopack_context__) => {
+"[project]/src/app/api/auth/login/route.js [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s([
@@ -61,17 +61,30 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$serv
 ;
 async function POST(request) {
     try {
-        // Since we're using FormData in the frontend
-        const formData = await request.formData();
-        // Call the backend API to register
-        const response = await fetch(`${("TURBOPACK compile-time value", "http://localhost:5000")}/api/auth/register`, {
+        const { email, password } = await request.json();
+        // Validate input
+        if (!email || !password) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                message: 'Email and password are required'
+            }, {
+                status: 400
+            });
+        }
+        // Call the backend API to login
+        const response = await fetch(`${("TURBOPACK compile-time value", "http://localhost:5000")}/api/auth/login`, {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
         });
         const data = await response.json();
         if (!response.ok) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                message: data.message || 'Registration failed'
+                message: data.message || 'Login failed'
             }, {
                 status: response.status
             });
@@ -79,7 +92,7 @@ async function POST(request) {
         // Return the response from the backend
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(data);
     } catch (error) {
-        console.error('Registration error:', error);
+        console.error('Login error:', error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             message: 'Internal server error'
         }, {
@@ -90,4 +103,4 @@ async function POST(request) {
 }),
 ];
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__24e6f756._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__06a46ad1._.js.map

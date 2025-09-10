@@ -110,7 +110,7 @@ function AuthSuccess() {
             }
             try {
                 // Fetch user data to get role and other information
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                const apiUrl = ("TURBOPACK compile-time value", "http://localhost:5000") || 'http://localhost:5000';
                 const profileUrl = `${apiUrl}/api/users/profile`;
                 console.log('Fetching user profile from:', profileUrl);
                 const response = await fetch(profileUrl, {

@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }) => {
           formData.append(key, userData[key]);
         }
       });
+      console.log("Reached here");
       
       console.log('Sending registration request with data:', Object.fromEntries(formData.entries()));
       

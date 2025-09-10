@@ -143,6 +143,7 @@ function AuthForm(param) {
                     role,
                     profilePic
                 };
+                console.log("Reached here");
                 // Use the register function from AuthContext
                 const data = await register(userData);
                 // Redirect based on role

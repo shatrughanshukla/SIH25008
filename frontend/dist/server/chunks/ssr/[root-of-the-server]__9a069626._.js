@@ -75,7 +75,7 @@ const clearAuthState = ()=>{
     }
 };
 const getApiBaseUrl = ()=>{
-    return process.env.NEXT_PUBLIC_API_URL || '';
+    return ("TURBOPACK compile-time value", "http://localhost:5000") || '';
 };
 }),
 "[project]/src/app/components/Toast.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -460,6 +460,7 @@ const AuthProvider = ({ children })=>{
                     formData.append(key, userData[key]);
                 }
             });
+            console.log("Reached here");
             console.log('Sending registration request with data:', Object.fromEntries(formData.entries()));
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -722,7 +723,7 @@ const AuthProvider = ({ children })=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/src/app/context/AuthContext.js",
-        lineNumber: 366,
+        lineNumber: 367,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

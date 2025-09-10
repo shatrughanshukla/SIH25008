@@ -1,6 +1,6 @@
 {
+  "/api/auth/login/route": "app/api/auth/login/route.js",
   "/api/auth/register/route": "app/api/auth/register/route.js",
-  "/api/users/profile/route": "app/api/users/profile/route.js",
   "/auth/success/page": "app/auth/success/page.js",
   "/dashboard/student/page": "app/dashboard/student/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
