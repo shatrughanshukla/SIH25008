@@ -160,7 +160,7 @@ export default function AuthForm({ type }) {
     }
   };
 
-  // Profile picture is now handled directly in the registration process
+
 
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
@@ -228,6 +228,7 @@ export default function AuthForm({ type }) {
           </div>
           <input
             id={emailId}
+
             type="email"
             placeholder="Email Address"
             value={email}

@@ -210,7 +210,6 @@ useEffect(() => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -251,7 +250,6 @@ useEffect(() => {
                   <span className="font-medium">{item.name}</span>
                 </button>
               ))}
-              
               {/* Profile and Logout */}
               <div className="pt-4 mt-4 border-t border-gray-200">
                 <button
@@ -281,7 +279,6 @@ useEffect(() => {
               <h1 className="text-2xl font-bold text-gray-800">Teacher Dashboard</h1>
               <p className="text-gray-700">Welcome back, {user?.name || 'Teacher'}! Here's your disaster management teaching overview.</p>
             </div>
-            
             {renderTabContent()}
           </div>
         </div>
