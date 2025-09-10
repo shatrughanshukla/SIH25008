@@ -8,7 +8,7 @@ import FormattedTime from '../../../components/FormattedTime';
 import { formatTime } from '../../../lib/dateUtils';
 
 // Replace this backend URL with an env var if you deploy / proxy it later
-const BACKEND_CHAT_URL = 'http://127.0.0.1:5000/chat';
+const BACKEND_CHAT_URL = 'http://127.0.0.1:5001/chat';
 
 export default function Page() {
   return (
@@ -142,11 +142,11 @@ function Chatbot() {
           <div className="bg-white rounded-xl shadow p-4">
             <h3 className="text-blue-600 font-semibold mb-3">Learning Topics</h3>
             <ul className="space-y-2 text-sm">
-              <li className="px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Natural Disasters Overview</li>
-              <li className="px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Earthquake Preparedness</li>
-              <li className="px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Flood Safety Measures</li>
-              <li className="px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Cyclone & Hurricane Prep</li>
-              <li className="px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">First Aid Basics</li>
+              <li className="text-black px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Natural Disasters Overview</li>
+              <li className="text-black px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Earthquake Preparedness</li>
+              <li className="text-black px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Flood Safety Measures</li>
+              <li className="text-black px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">Cyclone & Hurricane Prep</li>
+              <li className="text-black px-3 py-2 bg-blue-50 rounded hover:bg-blue-100 cursor-pointer">First Aid Basics</li>
             </ul>
 
             <div className="mt-4">
@@ -159,7 +159,7 @@ function Chatbot() {
 
         {/* Chat area (center) */}
         <section className="md:col-span-6 col-span-1 flex flex-col">
-          <div className="bg-white rounded-xl shadow overflow-hidden flex flex-col h-[70vh]">
+          <div className="bg-white rounded-xl shadow overflow-hidden flex flex-col h-[85vh]">
             <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
               <FaRobot />
               <div>
@@ -201,7 +201,7 @@ function Chatbot() {
                   <button
                     key={i}
                     onClick={() => sendToBot(q)}
-                    className="text-sm px-3 py-1.5 bg-white border rounded-full shadow-sm hover:bg-blue-50"
+                    className="text-sm px-3 py-1.5 bg-white border rounded-full shadow-sm hover:bg-blue-50 text-gray-800"
                   >
                     {q}
                   </button>
@@ -214,7 +214,7 @@ function Chatbot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type your question here..."
-                  className="flex-1 border rounded-full px-4 py-2 text-sm outline-none"
+                  className="flex-1 border rounded-full px-4 py-2 text-sm outline-none text-gray-800"
                 />
                 <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-full shadow">
                   <FiSend />
