@@ -1,6 +1,14 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/alerts/route": "app/api/alerts/route.js",
   "/auth/success/page": "app/auth/success/page.js",
+  "/dashboard/chatbot/page": "app/dashboard/chatbot/page.js",
+  "/dashboard/student/earthquakes/page": "app/dashboard/student/earthquakes/page.js",
+  "/dashboard/student/fire/page": "app/dashboard/student/fire/page.js",
+  "/dashboard/student/leaderboard/page": "app/dashboard/student/leaderboard/page.js",
   "/dashboard/student/page": "app/dashboard/student/page.js",
+  "/dashboard/student/reels/page": "app/dashboard/student/reels/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
   "/profile/page": "app/profile/page.js"

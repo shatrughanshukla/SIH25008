@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { FaBook, FaCalendarAlt, FaClipboardList, FaBell, FaUserCircle } from 'react-icons/fa';
 import AuthDiagnosticTool from '@/app/components/AuthDiagnosticTool';
 import Link from 'next/link';
-import { FaUserCircle, FaArrowRight } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
 import NotificationsList from '@/app/components/NotificationsList';
 import DashboardHeader from '@/app/components/DashboardHeader';
 
@@ -159,11 +159,10 @@ useEffect(() => {
 
   return (
     <>
-      <DashboardHeader />
+      <DashboardHeader user={user} logout={logout} />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 py-2 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-4">
 
-          <div className="max-w-7xl mx-auto">
         {/* Header with welcome banner */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-6 mb-8 text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
@@ -171,7 +170,7 @@ useEffect(() => {
               <h1 className="text-3xl font-bold">Welcome back, {user?.name || 'Student'}!</h1>
               <p className="mt-2 text-blue-100">Your disaster management training dashboard</p>
             </div>
-            <div className="mt-4 md:mt-0 flex items-center">
+            {/* <div className="mt-4 md:mt-0 flex items-center">
               {user?.profilePic ? (
                 <img 
                   src={user.profilePic} 
@@ -189,7 +188,7 @@ useEffect(() => {
                 <p className="font-medium">{user?.username || 'student@example.com'}</p>
                 <p className="text-sm text-blue-200">Student</p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 

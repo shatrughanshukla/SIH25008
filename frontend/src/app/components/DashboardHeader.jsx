@@ -15,6 +15,8 @@ import {
   Phone,
 } from 'lucide-react';
 
+import {useAuth} from "../context/AuthContext";
+
 const HELPLINES = [
   { service: 'General Emergency (all services)', numbers: ['112'] },
   { service: 'Police', numbers: ['100'] },
@@ -33,6 +35,7 @@ const HELPLINES = [
 const DashboardHeader = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const {logout} = useAuth();
 
   const profileMenuRef = useRef(null);
   const profileBtnRef = useRef(null);
@@ -216,7 +219,7 @@ const DashboardHeader = () => {
                   className="absolute right-0 mt-2 w-52 origin-top-right rounded-md bg-white shadow-xl ring-1 ring-black/5 focus:outline-none overflow-hidden"
                 >
                   <a
-                    href="/dashboard/profile"
+                    href="/profile"
                     role="menuitem"
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     onClick={() => setProfileOpen(false)}
@@ -235,13 +238,10 @@ const DashboardHeader = () => {
                   </a>
                   <div className="h-px bg-gray-200" />
                   <button
+                    onClick={logout}
                     type="button"
                     role="menuitem"
                     className="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
-                    onClick={() => {
-                      setProfileOpen(false);
-                      // TODO: hook your sign-out method here
-                    }}
                   >
                     <LogOut className="h-4 w-4" aria-hidden="true" />
                     Logout
