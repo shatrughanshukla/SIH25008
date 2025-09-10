@@ -21,7 +21,8 @@ export const ToastProvider = ({ children }) => {
    * @param {number} duration - Duration in ms to show toast
    */
   const showToast = (message, type = 'info', duration = 5000) => {
-    const id = Date.now();
+    // Use a more unique ID by combining timestamp with a random number
+    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     setToasts((prevToasts) => [...prevToasts, { id, message, type, duration }]);
   };
 

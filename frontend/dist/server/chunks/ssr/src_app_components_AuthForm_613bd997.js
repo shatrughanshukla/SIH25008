@@ -16,7 +16,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$ico
 ;
 ;
 function AuthForm({ type }) {
-    const { login, register: registerUser } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$context$2f$AuthContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAuth"])();
+    const { login, register } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$context$2f$AuthContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAuth"])();
     const [name, setName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [username, setUsername] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
@@ -130,7 +130,7 @@ function AuthForm({ type }) {
                     profilePic
                 };
                 // Use the register function from AuthContext
-                const data = await registerUser(userData);
+                const data = await register(userData);
                 // Redirect based on role
                 window.location.href = data.role === 'student' ? '/dashboard/student' : '/dashboard/teacher';
             } else {
@@ -141,7 +141,14 @@ function AuthForm({ type }) {
             }
         } catch (error) {
             console.error('Authentication error:', error);
-            alert(error.message || 'Authentication failed');
+            // Use a more user-friendly error message display instead of alert
+            const errorMessage = error.message || 'Authentication failed';
+            // You can use toast notifications if available in your project
+            if (window.toast && window.toast.showErrorToast) {
+                window.toast.showErrorToast(errorMessage);
+            } else {
+                alert(errorMessage);
+            }
         } finally{
             setLoading(false);
         }
@@ -158,7 +165,7 @@ function AuthForm({ type }) {
                         children: type === 'login' ? 'Sign in to your account' : 'Create your account'
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 161,
+                        lineNumber: 168,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -166,13 +173,13 @@ function AuthForm({ type }) {
                         children: type === 'login' ? 'Enter your credentials to access your account' : 'Fill in the information to get started'
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 164,
+                        lineNumber: 171,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/AuthForm.js",
-                lineNumber: 160,
+                lineNumber: 167,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -188,12 +195,12 @@ function AuthForm({ type }) {
                                     className: "h-5 w-5 text-gray-400"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 173,
+                                    lineNumber: 180,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 172,
+                                lineNumber: 179,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -207,13 +214,13 @@ function AuthForm({ type }) {
                                 suppressHydrationWarning: true
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 175,
+                                lineNumber: 182,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 171,
+                        lineNumber: 178,
                         columnNumber: 11
                     }, this),
                     type === 'register' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -225,12 +232,12 @@ function AuthForm({ type }) {
                                     className: "h-5 w-5 text-gray-400"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 191,
+                                    lineNumber: 198,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 190,
+                                lineNumber: 197,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -244,7 +251,7 @@ function AuthForm({ type }) {
                                 suppressHydrationWarning: true
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 193,
+                                lineNumber: 200,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -253,24 +260,24 @@ function AuthForm({ type }) {
                                     className: "h-5 w-5 border-t-2 border-blue-500 rounded-full animate-spin"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 205,
+                                    lineNumber: 212,
                                     columnNumber: 17
                                 }, this) : username && usernameAvailable === true ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaCheck"], {
                                     className: "h-5 w-5 text-green-500"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 207,
+                                    lineNumber: 214,
                                     columnNumber: 17
                                 }, this) : username && usernameAvailable === false ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaTimes"], {
                                     className: "h-5 w-5 text-red-500"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 209,
+                                    lineNumber: 216,
                                     columnNumber: 17
                                 }, this) : null
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 203,
+                                lineNumber: 210,
                                 columnNumber: 13
                             }, this),
                             usernameError && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -278,13 +285,13 @@ function AuthForm({ type }) {
                                 children: usernameError
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 213,
+                                lineNumber: 220,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 189,
+                        lineNumber: 196,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -296,12 +303,12 @@ function AuthForm({ type }) {
                                     className: "h-5 w-5 text-gray-400"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 220,
+                                    lineNumber: 227,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 219,
+                                lineNumber: 226,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -315,7 +322,7 @@ function AuthForm({ type }) {
                                 suppressHydrationWarning: true
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 222,
+                                lineNumber: 229,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -324,24 +331,24 @@ function AuthForm({ type }) {
                                     className: "h-5 w-5 border-t-2 border-blue-500 rounded-full animate-spin"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 234,
+                                    lineNumber: 241,
                                     columnNumber: 15
                                 }, this) : email && emailAvailable === true ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaCheck"], {
                                     className: "h-5 w-5 text-green-500"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 236,
+                                    lineNumber: 243,
                                     columnNumber: 15
                                 }, this) : email && emailAvailable === false ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaTimes"], {
                                     className: "h-5 w-5 text-red-500"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 238,
+                                    lineNumber: 245,
                                     columnNumber: 15
                                 }, this) : null
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 232,
+                                lineNumber: 239,
                                 columnNumber: 11
                             }, this),
                             emailError && type === 'register' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -349,13 +356,13 @@ function AuthForm({ type }) {
                                 children: emailError
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 242,
+                                lineNumber: 249,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 218,
+                        lineNumber: 225,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -367,12 +374,12 @@ function AuthForm({ type }) {
                                     className: "h-5 w-5 text-gray-400"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                    lineNumber: 248,
+                                    lineNumber: 255,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 247,
+                                lineNumber: 254,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -386,13 +393,13 @@ function AuthForm({ type }) {
                                 suppressHydrationWarning: true
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 250,
+                                lineNumber: 257,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 246,
+                        lineNumber: 253,
                         columnNumber: 9
                     }, this),
                     type === 'register' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -407,7 +414,7 @@ function AuthForm({ type }) {
                                         children: "Profile Picture"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 265,
+                                        lineNumber: 272,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -421,18 +428,18 @@ function AuthForm({ type }) {
                                                     className: "h-10 w-10 rounded-full object-cover"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                                    lineNumber: 269,
+                                                    lineNumber: 276,
                                                     columnNumber: 21
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaUser"], {
                                                     className: "h-5 w-5 text-gray-400"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/AuthForm.js",
-                                                    lineNumber: 275,
+                                                    lineNumber: 282,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 267,
+                                                lineNumber: 274,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -447,13 +454,13 @@ function AuthForm({ type }) {
                                                         className: "sr-only"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                                        lineNumber: 280,
+                                                        lineNumber: 287,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 278,
+                                                lineNumber: 285,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -461,19 +468,19 @@ function AuthForm({ type }) {
                                                 children: profilePic ? profilePic.name : 'No file chosen'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 288,
+                                                lineNumber: 295,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 266,
+                                        lineNumber: 273,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 264,
+                                lineNumber: 271,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -484,7 +491,7 @@ function AuthForm({ type }) {
                                         children: "I am a"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 295,
+                                        lineNumber: 302,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -498,7 +505,7 @@ function AuthForm({ type }) {
                                                         className: `h-5 w-5 mr-2 ${role === 'student' ? 'text-blue-500' : 'text-gray-400'}`
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                                        lineNumber: 301,
+                                                        lineNumber: 308,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -506,13 +513,13 @@ function AuthForm({ type }) {
                                                         children: "Student"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                                        lineNumber: 302,
+                                                        lineNumber: 309,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 297,
+                                                lineNumber: 304,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -523,7 +530,7 @@ function AuthForm({ type }) {
                                                         className: `h-5 w-5 mr-2 ${role === 'teacher' ? 'text-blue-500' : 'text-gray-400'}`
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                                        lineNumber: 308,
+                                                        lineNumber: 315,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -531,19 +538,19 @@ function AuthForm({ type }) {
                                                         children: "Teacher"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                                        lineNumber: 309,
+                                                        lineNumber: 316,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 304,
+                                                lineNumber: 311,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 296,
+                                        lineNumber: 303,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -558,7 +565,7 @@ function AuthForm({ type }) {
                                                 children: "Student"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 319,
+                                                lineNumber: 326,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -566,25 +573,25 @@ function AuthForm({ type }) {
                                                 children: "Teacher"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                                lineNumber: 320,
+                                                lineNumber: 327,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 312,
+                                        lineNumber: 319,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 294,
+                                lineNumber: 301,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 263,
+                        lineNumber: 270,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -597,12 +604,12 @@ function AuthForm({ type }) {
                             children: loading ? 'Processing...' : type === 'login' ? 'Sign In' : 'Create Account'
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/AuthForm.js",
-                            lineNumber: 327,
+                            lineNumber: 334,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 326,
+                        lineNumber: 333,
                         columnNumber: 9
                     }, this),
                     type === 'login' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -619,7 +626,7 @@ function AuthForm({ type }) {
                                         suppressHydrationWarning: true
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 340,
+                                        lineNumber: 347,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -628,13 +635,13 @@ function AuthForm({ type }) {
                                         children: "Remember me"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/AuthForm.js",
-                                        lineNumber: 347,
+                                        lineNumber: 354,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 339,
+                                lineNumber: 346,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -642,19 +649,19 @@ function AuthForm({ type }) {
                                 children: "Forgot password?"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/AuthForm.js",
-                                lineNumber: 351,
+                                lineNumber: 358,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 338,
+                        lineNumber: 345,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/AuthForm.js",
-                lineNumber: 169,
+                lineNumber: 176,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -666,12 +673,12 @@ function AuthForm({ type }) {
                             className: "w-full border-t border-gray-300"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/AuthForm.js",
-                            lineNumber: 360,
+                            lineNumber: 367,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 359,
+                        lineNumber: 366,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -681,18 +688,18 @@ function AuthForm({ type }) {
                             children: "Or continue with"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/AuthForm.js",
-                            lineNumber: 363,
+                            lineNumber: 370,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/AuthForm.js",
-                        lineNumber: 362,
+                        lineNumber: 369,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/AuthForm.js",
-                lineNumber: 358,
+                lineNumber: 365,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -704,7 +711,7 @@ function AuthForm({ type }) {
                             className: "h-5 w-5 text-red-500 mr-2"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/AuthForm.js",
-                            lineNumber: 372,
+                            lineNumber: 379,
                             columnNumber: 11
                         }, this),
                         "Sign ",
@@ -713,12 +720,12 @@ function AuthForm({ type }) {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/components/AuthForm.js",
-                    lineNumber: 368,
+                    lineNumber: 375,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/components/AuthForm.js",
-                lineNumber: 367,
+                lineNumber: 374,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -733,13 +740,13 @@ function AuthForm({ type }) {
                             children: "Sign up"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/AuthForm.js",
-                            lineNumber: 381,
+                            lineNumber: 388,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/components/AuthForm.js",
-                    lineNumber: 379,
+                    lineNumber: 386,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                     children: [
@@ -751,24 +758,24 @@ function AuthForm({ type }) {
                             children: "Sign in"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/AuthForm.js",
-                            lineNumber: 386,
+                            lineNumber: 393,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/components/AuthForm.js",
-                    lineNumber: 384,
+                    lineNumber: 391,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/components/AuthForm.js",
-                lineNumber: 377,
+                lineNumber: 384,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/components/AuthForm.js",
-        lineNumber: 159,
+        lineNumber: 166,
         columnNumber: 5
     }, this);
 }

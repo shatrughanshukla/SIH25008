@@ -304,7 +304,8 @@ const ToastProvider = ({ children })=>{
    * @param {string} type - Type of toast (success, error, warning, info)
    * @param {number} duration - Duration in ms to show toast
    */ const showToast = (message, type = 'info', duration = 5000)=>{
-        const id = Date.now();
+        // Use a more unique ID by combining timestamp with a random number
+        const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         setToasts((prevToasts)=>[
                 ...prevToasts,
                 {
@@ -345,18 +346,18 @@ const ToastProvider = ({ children })=>{
                         onClose: ()=>removeToast(toast.id)
                     }, toast.id, false, {
                         fileName: "[project]/src/app/context/ToastContext.js",
-                        lineNumber: 55,
+                        lineNumber: 56,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)))
             }, void 0, false, {
                 fileName: "[project]/src/app/context/ToastContext.js",
-                lineNumber: 53,
+                lineNumber: 54,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/context/ToastContext.js",
-        lineNumber: 43,
+        lineNumber: 44,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -402,6 +403,7 @@ const AuthProvider = ({ children })=>{
     // Login user
     const login = async (email, password)=>{
         try {
+            console.log('Attempting login with email:', email);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -412,13 +414,30 @@ const AuthProvider = ({ children })=>{
                     password
                 })
             });
+            console.log('Login response status:', response.status);
+            // Try to parse the response as JSON
+            let errorData;
+            let data;
+            try {
+                const responseText = await response.text();
+                console.log('Login response text:', responseText);
+                // Try to parse as JSON if possible
+                if (responseText) {
+                    data = JSON.parse(responseText);
+                    console.log('Login response data:', data);
+                }
+            } catch (parseError) {
+                console.error('Error parsing login response:', parseError);
+            }
             if (!response.ok) {
-                const errorData = await response.json();
-                const errorMessage = errorData.message || 'Login failed';
+                const errorMessage = data && data.message || 'Login failed. Please check your credentials.';
                 toast.showErrorToast(errorMessage);
                 throw new Error(errorMessage);
             }
-            const data = await response.json();
+            if (!data) {
+                toast.showErrorToast('Invalid response from server');
+                throw new Error('Invalid response from server');
+            }
             // Save user to state and localStorage
             setUser(data);
             localStorage.setItem('user', JSON.stringify(data));
@@ -426,6 +445,7 @@ const AuthProvider = ({ children })=>{
             return data;
         } catch (error) {
             console.error('Login error:', error);
+            toast.showErrorToast(error.message || 'Login failed. Please try again.');
             throw error;
         }
     };
@@ -435,20 +455,29 @@ const AuthProvider = ({ children })=>{
             const formData = new FormData();
             // Append all user data to formData
             Object.keys(userData).forEach((key)=>{
-                formData.append(key, userData[key]);
+                // Only append if the value exists
+                if (userData[key] !== null && userData[key] !== undefined) {
+                    formData.append(key, userData[key]);
+                }
             });
+            console.log('Sending registration request with data:', Object.fromEntries(formData.entries()));
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 body: formData
             });
+            // Log response status for debugging
+            console.log('Registration response status:', response.status);
             const data = await response.json();
+            console.log('Registration response data:', data);
             if (!response.ok) {
                 // Handle specific error messages from the backend
                 let errorMessage = data.message || 'Registration failed';
-                if (data.message === 'User already exists') {
+                if (data.message === 'User already exists' || data.message === 'Email already in use') {
                     errorMessage = 'A user with this email already exists';
-                } else if (data.message === 'Username already exists') {
+                } else if (data.message === 'Username already exists' || data.message === 'Username already taken') {
                     errorMessage = 'This username is already taken';
+                } else if (data.message === 'Please fill all required fields') {
+                    errorMessage = 'Please fill all required fields (name, username, email, password, role)';
                 }
                 toast.showErrorToast(errorMessage);
                 throw new Error(errorMessage);
@@ -460,6 +489,7 @@ const AuthProvider = ({ children })=>{
             return data;
         } catch (error) {
             console.error('Registration error:', error);
+            toast.showErrorToast(error.message || 'Registration failed. Please try again.');
             throw error;
         }
     };
@@ -682,6 +712,7 @@ const AuthProvider = ({ children })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AuthContext.Provider, {
         value: {
             user,
+            setUser,
             loading,
             login,
             register,
@@ -691,7 +722,7 @@ const AuthProvider = ({ children })=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/src/app/context/AuthContext.js",
-        lineNumber: 330,
+        lineNumber: 366,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

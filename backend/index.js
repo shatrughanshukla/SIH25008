@@ -8,7 +8,13 @@ const session = require('express-session');
 const cors = require('cors');
 require('./passport-setup');
 
-connectDB();
+// Connect to MongoDB but don't exit if connection fails
+(async () => {
+  const connected = await connectDB();
+  if (!connected) {
+    console.warn('Warning: MongoDB connection failed. Some features may not work properly.');
+  }
+})();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

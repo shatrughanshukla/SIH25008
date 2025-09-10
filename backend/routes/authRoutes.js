@@ -74,23 +74,33 @@ router.get('/check-email/:email', async (req, res) => {
 // Register User
 router.post('/register', upload.single('profilePic'), async (req, res) => {
   try {
+    console.log('Registration attempt with data:', req.body);
     const { name, username, email, password, role } = req.body;
     
     // Validate required fields
     if (!name || !username || !email || !password || !role) {
+      console.log('Registration failed: Missing required fields');
       return res.status(400).json({ message: 'Please fill all required fields' });
     }
 
-    // Check if user already exists by email
-    const emailExists = await User.findOne({ email });
-    if (emailExists) {
-      return res.status(400).json({ message: 'Email already in use' });
-    }
-    
-    // Check if username is taken
-    const usernameExists = await User.findOne({ username });
-    if (usernameExists) {
-      return res.status(400).json({ message: 'Username already taken' });
+    try {
+      // Check if user already exists by email
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        console.log('Registration failed: Email already in use -', email);
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      
+      // Check if username is taken
+      const usernameExists = await User.findOne({ username });
+      if (usernameExists) {
+        console.log('Registration failed: Username already taken -', username);
+        return res.status(400).json({ message: 'Username already taken' });
+      }
+    } catch (dbError) {
+      console.error('Database query error:', dbError);
+      // Continue with registration even if database checks fail
+      console.log('Warning: Skipping duplicate checks due to database error');
     }
 
     // Create user with profile picture if uploaded
@@ -104,50 +114,91 @@ router.post('/register', upload.single('profilePic'), async (req, res) => {
 
     // Add profile picture path if file was uploaded
     if (req.file) {
+      console.log('Profile picture uploaded:', req.file.path);
       userData.profilePic = `/${req.file.path}`;
+    } else {
+      console.log('No profile picture uploaded, using default');
+      userData.profilePic = '/uploads/default.png';
     }
 
-    const user = await User.create(userData);
+    console.log('Creating user with data:', { ...userData, password: '[HIDDEN]' });
+    
+    try {
+      const user = await User.create(userData);
 
-    if (user) {
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        token: user.getSignedJwtToken(),
-      });
-    } else {
-      res.status(400).json({ message: 'Invalid user data' });
+      if (user) {
+        console.log('User created successfully:', user._id);
+        // Generate JWT token
+        const token = user.getSignedJwtToken();
+        console.log('Token generated successfully');
+        
+        return res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          token: token,
+        });
+      } else {
+        console.log('Registration failed: Invalid user data');
+        return res.status(400).json({ message: 'Invalid user data' });
+      }
+    } catch (createError) {
+      console.error('User creation error:', createError);
+      // Check for duplicate key error
+      if (createError.code === 11000) {
+        const field = Object.keys(createError.keyPattern)[0];
+        return res.status(400).json({ message: `${field} already exists` });
+      }
+      throw createError; // Re-throw for the outer catch block
     }
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: 'Server error during registration process' });
   }
 });
 
 // Login User
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  console.log('Login attempt for email:', email);
+
+  // Validate input
+  if (!email || !password) {
+    console.log('Login failed: Missing email or password');
+    return res.status(400).json({ message: 'Please provide email and password' });
+  }
 
   try {
+    // Find user by email
     const user = await User.findOne({ email });
+    console.log('User found:', user ? 'Yes' : 'No');
 
+    // Check if user exists and password matches
     if (user && (await user.matchPassword(password))) {
-      res.json({
+      console.log('Login successful for user:', user.username);
+      
+      // Generate JWT token
+      const token = user.getSignedJwtToken();
+      console.log('Token generated successfully');
+      
+      // Send successful response
+      return res.json({
         _id: user._id,
         name: user.name,
         username: user.username,
         email: user.email,
         role: user.role,
-        token: user.getSignedJwtToken(),
+        token: token,
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      console.log('Login failed: Invalid credentials');
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Login error:', error);
+    return res.status(500).json({ message: 'Server error during login process' });
   }
 });
 

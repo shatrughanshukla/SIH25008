@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { FaUser, FaEnvelope, FaLock, FaUserGraduate, FaChalkboardTeacher, FaGoogle, FaCheck, FaTimes } from 'react-icons/fa';
 
 export default function AuthForm({ type }) {
-  const { login, register: registerUser } = useAuth();
+  const { login, register } = useAuth();
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -134,7 +134,7 @@ export default function AuthForm({ type }) {
         };
         
         // Use the register function from AuthContext
-        const data = await registerUser(userData);
+        const data = await register(userData);
         
         // Redirect based on role
         window.location.href = data.role === 'student' ? '/dashboard/student' : '/dashboard/teacher';
@@ -147,7 +147,14 @@ export default function AuthForm({ type }) {
       }
     } catch (error) {
       console.error('Authentication error:', error);
-      alert(error.message || 'Authentication failed');
+      // Use a more user-friendly error message display instead of alert
+      const errorMessage = error.message || 'Authentication failed';
+      // You can use toast notifications if available in your project
+      if (window.toast && window.toast.showErrorToast) {
+        window.toast.showErrorToast(errorMessage);
+      } else {
+        alert(errorMessage);
+      }
     } finally {
       setLoading(false);
     }

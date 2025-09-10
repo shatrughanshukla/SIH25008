@@ -23,6 +23,8 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (email, password) => {
     try {
+      console.log('Attempting login with email:', email);
+      
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -31,14 +33,35 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
+      console.log('Login response status:', response.status);
+      
+      // Try to parse the response as JSON
+      let errorData;
+      let data;
+      
+      try {
+        const responseText = await response.text();
+        console.log('Login response text:', responseText);
+        
+        // Try to parse as JSON if possible
+        if (responseText) {
+          data = JSON.parse(responseText);
+          console.log('Login response data:', data);
+        }
+      } catch (parseError) {
+        console.error('Error parsing login response:', parseError);
+      }
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        const errorMessage = errorData.message || 'Login failed';
+        const errorMessage = (data && data.message) || 'Login failed. Please check your credentials.';
         toast.showErrorToast(errorMessage);
         throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      if (!data) {
+        toast.showErrorToast('Invalid response from server');
+        throw new Error('Invalid response from server');
+      }
       
       // Save user to state and localStorage
       setUser(data);
@@ -48,6 +71,7 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Login error:', error);
+      toast.showErrorToast(error.message || 'Login failed. Please try again.');
       throw error;
     }
   };
@@ -59,23 +83,34 @@ export const AuthProvider = ({ children }) => {
       
       // Append all user data to formData
       Object.keys(userData).forEach(key => {
-        formData.append(key, userData[key]);
+        // Only append if the value exists
+        if (userData[key] !== null && userData[key] !== undefined) {
+          formData.append(key, userData[key]);
+        }
       });
+      
+      console.log('Sending registration request with data:', Object.fromEntries(formData.entries()));
       
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         body: formData,
       });
 
+      // Log response status for debugging
+      console.log('Registration response status:', response.status);
+      
       const data = await response.json();
+      console.log('Registration response data:', data);
       
       if (!response.ok) {
         // Handle specific error messages from the backend
         let errorMessage = data.message || 'Registration failed';
-        if (data.message === 'User already exists') {
+        if (data.message === 'User already exists' || data.message === 'Email already in use') {
           errorMessage = 'A user with this email already exists';
-        } else if (data.message === 'Username already exists') {
+        } else if (data.message === 'Username already exists' || data.message === 'Username already taken') {
           errorMessage = 'This username is already taken';
+        } else if (data.message === 'Please fill all required fields') {
+          errorMessage = 'Please fill all required fields (name, username, email, password, role)';
         }
         toast.showErrorToast(errorMessage);
         throw new Error(errorMessage);
@@ -89,6 +124,7 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Registration error:', error);
+      toast.showErrorToast(error.message || 'Registration failed. Please try again.');
       throw error;
     }
   };
@@ -330,6 +366,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         loading,
         login,
         register,
