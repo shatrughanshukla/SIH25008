@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import DashboardHeader from '../../components/DashboardHeader'; // <- adjust path if different
 import { FiSend } from 'react-icons/fi';
 import { FaRobot } from 'react-icons/fa';
+import FormattedTime from '../../../components/FormattedTime';
+import { formatTime } from '../../../lib/dateUtils';
 
 // Replace this backend URL with an env var if you deploy / proxy it later
 const BACKEND_CHAT_URL = 'http://127.0.0.1:5000/chat';
@@ -176,7 +178,7 @@ function Chatbot() {
                     ) : (
                       <div className="whitespace-pre-wrap text-sm">{m.text}</div>
                     )}
-                    <div className="text-[10px] mt-1 opacity-60 text-right">{new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="text-[10px] mt-1 opacity-60 text-right"><FormattedTime time={m.time} format="time" /></div>
                   </div>
                 </div>
               ))}

@@ -1,5 +1,6 @@
 // src/app/alerts/cap/[identifier]/page.jsx
 import { XMLParser } from 'fast-xml-parser';
+import { formatServerDate } from '../../../../lib/serverDateUtils';
 
 export const revalidate = 60;
 
@@ -68,10 +69,10 @@ export default async function CapAlertPage({ params }) {
 
         <div className="mt-2 text-sm text-gray-600">
           <p><span className="font-medium">Event:</span> {event}</p>
-          <p><span className="font-medium">Issued:</span> {sent ? new Date(sent).toLocaleString('en-IN') : '—'}</p>
-          <p><span className="font-medium">Effective:</span> {effective ? new Date(effective).toLocaleString('en-IN') : '—'}</p>
-          <p><span className="font-medium">Onset:</span> {onset ? new Date(onset).toLocaleString('en-IN') : '—'}</p>
-          <p><span className="font-medium">Expires:</span> {expires ? new Date(expires).toLocaleString('en-IN') : '—'}</p>
+          <p><span className="font-medium">Issued:</span> {formatServerDate(sent, 'en-IN')}</p>
+          <p><span className="font-medium">Effective:</span> {formatServerDate(effective, 'en-IN')}</p>
+          <p><span className="font-medium">Onset:</span> {formatServerDate(onset, 'en-IN')}</p>
+          <p><span className="font-medium">Expires:</span> {formatServerDate(expires, 'en-IN')}</p>
           <p><span className="font-medium">Urgency/Certainty:</span> {[urgency, certainty].filter(Boolean).join(' / ') || '—'}</p>
           <p><span className="font-medium">Sender:</span> {sender || '—'}</p>
           <p><span className="font-medium">Identifier:</span> {identifier}</p>

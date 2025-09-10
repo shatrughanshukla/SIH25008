@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import FormattedTime from '../../components/FormattedTime';
 
 function severityClasses(sev = '') {
   const k = String(sev).toLowerCase();
@@ -52,7 +53,7 @@ export default function NotificationCard({ alert }) {
       </div>
       <div className="mt-1 flex items-center gap-2 text-[11px] text-gray-700">
         <time className="whitespace-nowrap">
-          {alert.time ? new Date(alert.time).toLocaleString('en-IN') : '—'}
+          <FormattedTime time={alert.time} format="date" />
         </time>
         <span>•</span>
         <span className="truncate">📍 {alert.location || '—'}</span>
