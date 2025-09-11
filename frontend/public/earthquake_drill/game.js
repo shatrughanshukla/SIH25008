@@ -11,7 +11,8 @@ const CONFIG = {
   scene: [PreloadScene, MenuScene, PlayScene, ResultScene],
 };
 
-let game = new Phaser.Game(CONFIG);
+// Make sure the game variable is accessible globally
+window.game = new Phaser.Game(CONFIG);
 
 /* ------------------ PreloadScene ------------------ */
 function PreloadScene() {
@@ -154,10 +155,7 @@ MenuScene.prototype.create = function () {
   const resultDiv = document.getElementById("result");
   resultDiv.innerText = "";
   startBtn.disabled = false;
-  startBtn.onclick = () => {
-    startBtn.disabled = true;
-    this.scene.start("PlayScene");
-  };
+  // We don't set onclick here anymore as it's handled in the HTML file
 };
 
 /* ------------------ PlayScene ------------------ */
@@ -601,6 +599,10 @@ ResultScene.prototype.create = function () {
   // Show result text in the UI area (re-uses HTML)
   const startBtn = document.getElementById("start-btn");
   const resultDiv = document.getElementById("result");
+  
+  // Set values in the registry for the enhanced UI to access
+  this.registry.set('result', this.result);
+  this.registry.set('health', this.finalHealth);
 
   if (this.result === "safe") {
     resultDiv.innerText = `SAFE ✅ — You followed Duck, Cover & Hold! Final Health: ${this.finalHealth}%`;
