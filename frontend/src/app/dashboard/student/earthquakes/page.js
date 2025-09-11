@@ -134,15 +134,15 @@ export default function EarthquakeModulePage() {
                 {/* Soft gradient for text legibility */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent z-0" />
                 {/* Play Game -> open modal */}
-<a
-  href="/earthquake_drill/index.html"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="z-10 absolute left-1/2 -translate-x-1/2 bottom-5 sm:bottom-6 inline-flex items-center gap-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 shadow-md"
->
-  <FaPlay aria-hidden="true" />
-  Play Game
-</a>
+                <a
+                href="/earthquake_drill/index.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="z-10 absolute left-1/2 -translate-x-1/2 bottom-5 sm:bottom-6 inline-flex items-center gap-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 shadow-md"
+                >
+                <FaPlay aria-hidden="true" />
+                Play Game
+                </a>
 
               </div>
 
@@ -163,7 +163,7 @@ export default function EarthquakeModulePage() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <Link
-                  href="/student/dashboard/earthquake/assignment"
+                  href="/dashboard/student/earthquakes/assignment"
                   className="inline-flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 shadow-sm"
                   prefetch
                 >

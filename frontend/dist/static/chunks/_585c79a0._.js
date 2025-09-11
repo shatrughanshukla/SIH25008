@@ -210,42 +210,6 @@ function AuthSuccess() {
                             fileName: "[project]/src/app/auth/success/page.js",
                             lineNumber: 185,
                             columnNumber: 11
-                        }, this),
-                        isClient && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "mt-4 p-4 bg-gray-100 rounded text-left text-xs",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    children: "Debug Info:"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/app/auth/success/page.js",
-                                    lineNumber: 193,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    children: [
-                                        "Token: ",
-                                        searchParams.get('token') ? 'Present' : 'Missing'
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/app/auth/success/page.js",
-                                    lineNumber: 194,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    children: [
-                                        "User ID: ",
-                                        searchParams.get('userId') ? 'Present' : 'Missing'
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/app/auth/success/page.js",
-                                    lineNumber: 195,
-                                    columnNumber: 15
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/src/app/auth/success/page.js",
-                            lineNumber: 192,
-                            columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
@@ -259,7 +223,7 @@ function AuthSuccess() {
                         className: "animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
                     }, void 0, false, {
                         fileName: "[project]/src/app/auth/success/page.js",
-                        lineNumber: 201,
+                        lineNumber: 193,
                         columnNumber: 13
                     }, this) : error ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                         xmlns: "http://www.w3.org/2000/svg",
@@ -274,12 +238,12 @@ function AuthSuccess() {
                             d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         }, void 0, false, {
                             fileName: "[project]/src/app/auth/success/page.js",
-                            lineNumber: 204,
+                            lineNumber: 196,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/auth/success/page.js",
-                        lineNumber: 203,
+                        lineNumber: 195,
                         columnNumber: 13
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                         xmlns: "http://www.w3.org/2000/svg",
@@ -294,17 +258,17 @@ function AuthSuccess() {
                             d: "M5 13l4 4L19 7"
                         }, void 0, false, {
                             fileName: "[project]/src/app/auth/success/page.js",
-                            lineNumber: 208,
+                            lineNumber: 200,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/auth/success/page.js",
-                        lineNumber: 207,
+                        lineNumber: 199,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/auth/success/page.js",
-                    lineNumber: 199,
+                    lineNumber: 191,
                     columnNumber: 9
                 }, this)
             ]

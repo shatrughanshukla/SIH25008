@@ -187,14 +187,6 @@ export default function AuthSuccess() {
               ? `Error: ${error}. Redirecting to login page...` 
               : 'Please wait while we redirect you to your dashboard.'}
           </p>
-          {/* Debug info - only visible during development and only on client-side */}
-          {isClient && (
-            <div className="mt-4 p-4 bg-gray-100 rounded text-left text-xs">
-              <p>Debug Info:</p>
-              <p>Token: {searchParams.get('token') ? 'Present' : 'Missing'}</p>
-              <p>User ID: {searchParams.get('userId') ? 'Present' : 'Missing'}</p>
-            </div>
-          )}
         </div>
         <div className="flex justify-center">
           {loading ? (

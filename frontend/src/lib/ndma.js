@@ -130,7 +130,7 @@ export async function getNdmaCapAlerts(limit = 5){
   await Promise.allSettled(top.map(async a => {
     if (!a.xmlUrl) return;
     try {
-      const capXml = await fetchWithTimeout(a.xmlUrl, 4000);
+      const capXml = await fetchWithTimeout(a.xmlUrl, 10000);
       const capJ = parser.parse(capXml);
       const alert = capJ?.['cap:alert'] || {};
       const infosRaw = alert?.['cap:info'];
