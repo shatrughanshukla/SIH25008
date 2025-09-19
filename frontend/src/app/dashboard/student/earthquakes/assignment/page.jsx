@@ -4,6 +4,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import DashboardHeader from '@/app/components/DashboardHeader';
 
 /* ---------- QUESTIONS (same as before) ---------- */
 const QUESTIONS = [
@@ -397,6 +398,8 @@ export default function EarthquakeQuiz() {
     (selected !== null && !answers.some((a) => a.qid === currentQ.id) ? 1 : 0);
 
   return (
+    <>
+    <DashboardHeader/>
     <div className="page-root">
       <header className="topbar">
         <div className="brand">
@@ -873,5 +876,6 @@ export default function EarthquakeQuiz() {
         .shake { animation: shake-key 0.5s; }
       `}</style>
     </div>
+    </>
   );
 }
